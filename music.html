@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Music | Lotus Labz</title>
+  <title>Music Library | Lotus Labz</title>
   <meta name="description" content="Lotus Labz merges electronic music, AI art, cybernetic media, and immersive multimedia design." />
   <style>
 :root {
@@ -18,7 +18,6 @@
 }
 
 * { box-sizing: border-box; }
-
 html { scroll-behavior: smooth; }
 
 body {
@@ -70,11 +69,7 @@ nav ul {
   margin: 0;
 }
 
-nav a, a {
-  color: white;
-  text-decoration: none;
-}
-
+nav a, a { color: white; text-decoration: none; }
 nav a:hover, a:hover { color: var(--accent); }
 
 .logo {
@@ -150,19 +145,10 @@ section h2 {
   margin-bottom: 28px;
 }
 
-.grid {
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 20px;
-}
+.grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+.work-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
 
-.work-grid {
-  display: grid;
-  grid-template-columns: repeat(4,1fr);
-  gap: 18px;
-}
-
-.card, .work-card {
+.card, .work-card, .video-card {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: 22px;
@@ -180,15 +166,8 @@ section h2 {
     rgba(7,10,15,.82);
 }
 
-.work-card h3 {
-  margin: 0 0 8px;
-}
-
-.work-card p {
-  margin: 0;
-  color: var(--muted);
-  font-size: .95rem;
-}
+.work-card h3 { margin: 0 0 8px; }
+.work-card p { margin: 0; color: var(--muted); font-size: .95rem; }
 
 a.card, a.work-card {
   display: flex;
@@ -203,9 +182,7 @@ a.card:hover, a.work-card:hover {
   color: var(--text);
 }
 
-.card p, .page-title p, .placeholder p {
-  color: var(--muted);
-}
+.card p, .page-title p, .placeholder p, .video-card p { color: var(--muted); }
 
 .btn {
   display: inline-block;
@@ -225,21 +202,10 @@ a.card:hover, a.work-card:hover {
   border: 1px solid var(--line);
 }
 
-.btn:hover {
-  color: black;
-  opacity: .92;
-}
+.btn:hover { color: black; opacity: .92; }
+.btn.secondary:hover { color: var(--text); border-color: rgba(255,24,32,.65); }
 
-.btn.secondary:hover {
-  color: var(--text);
-  border-color: rgba(255,24,32,.65);
-}
-
-.button-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
+.button-row { display: flex; flex-wrap: wrap; gap: 12px; }
 
 .page-title {
   max-width: 1120px;
@@ -261,17 +227,89 @@ a.card:hover, a.work-card:hover {
   backdrop-filter: blur(12px);
 }
 
+.video-stack { display: grid; gap: 34px; }
+
+.video-card {
+  padding: 0;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(7,10,15,.92), rgba(7,10,15,.72));
+  box-shadow: 0 18px 70px rgba(0,0,0,.42);
+}
+
+.video-info { padding: 24px 28px 30px; }
+
+.video-info h3 {
+  margin: 0 0 8px;
+  font-size: clamp(1.6rem, 3vw, 2.35rem);
+  letter-spacing: -0.04em;
+}
+
+.video-meta {
+  display: inline-flex;
+  color: var(--accent);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.video-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: rgba(0,0,0,.65);
+  border-bottom: 1px solid var(--line);
+}
+
+.video-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.coming-soon {
+  min-height: 360px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255,24,32,.22), transparent 36%),
+    linear-gradient(135deg, rgba(255,24,32,.16), rgba(40,169,255,.10)),
+    rgba(0,0,0,.68);
+  border-bottom: 1px solid var(--line);
+}
+
+.coming-soon-inner { padding: 32px; }
+
+.coming-soon .status {
+  color: var(--accent);
+  font-weight: 900;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  font-size: .9rem;
+}
+
+.coming-soon .title {
+  margin-top: 12px;
+  font-size: clamp(3rem, 8vw, 6rem);
+  line-height: .9;
+  font-weight: 900;
+  letter-spacing: -0.08em;
+}
+
+.coming-soon .bpm {
+  margin-top: 16px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
 .contact-card {
   background: linear-gradient(135deg, rgba(255,24,32,.14), rgba(40,169,255,.08)), var(--panel-strong);
 }
 
-.socials {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 20px;
-}
-
+.socials { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
 .socials a {
   border: 1px solid var(--line);
   border-radius: 999px;
@@ -289,30 +327,12 @@ footer {
 
 @media(max-width: 900px){
   .grid, .work-grid { grid-template-columns: 1fr; }
-
-  .hero {
-    min-height: auto;
-    padding: 80px 18px;
-  }
-
-  .hero-panel {
-    padding: 26px;
-  }
-
-  nav {
-    align-items: flex-start;
-    gap: 16px;
-    flex-direction: column;
-  }
-
-  nav ul {
-    flex-wrap: wrap;
-    gap: 14px;
-  }
-
-  .logo {
-    height: 36px;
-  }
+  .hero { min-height: auto; padding: 80px 18px; }
+  .hero-panel { padding: 26px; }
+  nav { align-items: flex-start; gap: 16px; flex-direction: column; }
+  nav ul { flex-wrap: wrap; gap: 14px; }
+  .logo { height: 36px; }
+  .video-info { padding: 22px; }
 }
 </style>
 </head>
@@ -322,6 +342,7 @@ footer {
     <a href="index.html"><img src="lotus-labz-logo.png" class="logo" alt="Lotus Labz Logo"></a>
     <ul>
       <li><a href="index.html#what-we-do">What We Do</a></li>
+      <li><a href="visuals.html">Videos</a></li>
       <li><a href="index.html#work">Portfolio</a></li>
       <li><a href="index.html#contact">Contact</a></li>
     </ul>
@@ -330,15 +351,15 @@ footer {
 
 
 <div class="page-title">
-  <h1>Music</h1>
-  <p>Electronic music production, DJ history, releases, sound design, and performance identity for Jynxer23.</p>
+  <h1>Music Library</h1>
+  <p>Electronic music releases organized by year. YouTube links will be added and refined as each release page is finalized.</p>
 </div>
 
 <section>
-  <div class="placeholder">
-    <h2>Music hub coming next</h2>
-    <p>This page is ready for YouTube embeds, Beatport links, streaming links, release notes, and featured tracks.</p>
-    <a class="btn" href="https://www.youtube.com/@jamiesako3502" target="_blank">Visit YouTube</a>
+  <div class="grid">
+    <div class="card"><h2>2026</h2><p><strong>Don’t Stop</strong> — 174 BPM<br><span style="color:#ff1820;">Coming Soon</span></p></div>
+    <div class="card"><h2>2025</h2><p>Rise Again<br>Keep It Moving<br>Bubblegum<br>Obsidian<br>No More Tears<br><a href="https://www.youtube.com/watch?v=904VDL-FdVo" target="_blank">Sound the Alarms</a><br><a href="https://www.youtube.com/watch?v=dDyzxAHObX8" target="_blank">Celestial Code</a><br><a href="https://www.youtube.com/watch?v=biUP9cZMuA8" target="_blank">SHIFT</a><br><a href="https://www.youtube.com/watch?v=7hF2j-igCzA" target="_blank">GATITO</a></p></div>
+    <div class="card"><h2>2024</h2><p>Make You Mine<br>Come With It<br>Promise You<br>Two To The Three<br>Spellbound<br>777<br>The Beckoning<br>Cozmik<br>Elysium<br><a href="https://www.youtube.com/watch?v=tQQeqqP8Tek" target="_blank">Mind Control</a></p></div>
   </div>
 </section>
 
