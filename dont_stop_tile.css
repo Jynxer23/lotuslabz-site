@@ -1,0 +1,50 @@
+.coming-soon {
+  position: relative;
+  overflow: hidden;
+  background: #050505;
+  border: 1px solid rgba(255, 0, 0, 0.2);
+  border-radius: 14px;
+}
+
+.video-thumbnail {
+  width: 100%;
+  display: block;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.video-info {
+  padding: 18px;
+  background: #070707;
+}
+
+.video-info h3 {
+  color: #ff1a1a;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+}
+
+.coming-text {
+  color: #ffffff;
+  font-weight: bold;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.listen-button {
+  display: inline-block;
+  padding: 12px 18px;
+  background: #ff0000;
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: 0.3s ease;
+  font-weight: bold;
+}
+
+.listen-button:hover {
+  background: #cc0000;
+  transform: scale(1.03);
+}
