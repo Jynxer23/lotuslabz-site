@@ -1,268 +1,102 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Visual Design | Lotus Labz</title><meta name="description" content="Lotus Labz merges electronic music, AI art, cybernetic media, and immersive multimedia design."/><style>
-:root{--bg:#040508;--panel:rgba(7,10,15,.78);--panel-strong:rgba(7,10,15,.9);--text:#f7f8fb;--muted:#b8c1cc;--accent:#ff1820;--blue:#28a9ff;--line:rgba(255,255,255,.13)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(rgba(4,5,8,.70),rgba(4,5,8,.94)),url("background.jpg") center/cover fixed no-repeat;color:var(--text);line-height:1.6}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 30% 18%,rgba(255,24,32,.18),transparent 34%),radial-gradient(circle at 72% 22%,rgba(40,169,255,.15),transparent 30%),linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,.08),rgba(0,0,0,.38));z-index:-1}
-header{padding:18px 22px;border-bottom:1px solid var(--line);background:rgba(0,0,0,.8);backdrop-filter:blur(14px);position:sticky;top:0;z-index:10}
-nav{display:flex;justify-content:space-between;align-items:center;max-width:1180px;margin:auto;gap:24px}nav ul{display:flex;list-style:none;gap:22px;padding:0;margin:0}nav a,a{color:white;text-decoration:none}nav a:hover,a:hover{color:var(--accent)}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Video Archive | Lotus Labz</title>
+<style>
+:root{--panel:rgba(7,10,15,.82);--text:#f7f8fb;--muted:#b8c1cc;--accent:#ff1820;--line:rgba(255,255,255,.13)}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(rgba(4,5,8,.70),rgba(4,5,8,.94)),url("background.jpg") center/cover fixed no-repeat;color:var(--text)}
+header{padding:18px 22px;border-bottom:1px solid var(--line);background:rgba(0,0,0,.82);position:sticky;top:0;z-index:10}
+nav{max-width:1180px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
 .logo{height:96px;max-width:520px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(255,24,32,.55))}
-.hero{min-height:calc(100vh - 130px);max-width:1180px;margin:auto;padding:95px 20px 86px;display:flex;align-items:center}.hero-panel{max-width:920px;padding:46px;background:linear-gradient(135deg,rgba(0,0,0,.76),rgba(10,13,18,.5));border:1px solid rgba(255,255,255,.15);border-radius:28px;box-shadow:0 24px 90px rgba(0,0,0,.62);backdrop-filter:blur(10px)}.hero-brand{width:min(100%,920px);margin-bottom:24px;filter:drop-shadow(0 0 22px rgba(255,24,32,.55))}
-.kicker{color:var(--accent);text-transform:uppercase;letter-spacing:.16em;font-weight:900;font-size:1.6rem;margin-bottom:18px}.hero h1{font-size:clamp(1.75rem,4vw,2.85rem);line-height:1.02;margin:0 0 20px;letter-spacing:-.04em}.hero p{color:var(--muted);font-size:1.1rem;max-width:720px}
-section{max-width:1180px;margin:auto;padding:72px 20px}section h2{font-size:2.35rem;line-height:1;margin-top:0;letter-spacing:-.04em}.section-intro{color:var(--muted);max-width:820px;margin-bottom:28px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.work-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.card,.work-card,.video-card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:30px;backdrop-filter:blur(12px)}.work-card{min-height:210px;display:flex;flex-direction:column;justify-content:flex-end;background:linear-gradient(180deg,rgba(255,24,32,.14),rgba(0,0,0,.76)),rgba(7,10,15,.82)}.work-card h3{margin:0 0 8px}.work-card p,.card p,.page-title p,.placeholder p,.video-card p{color:var(--muted)}a.card,a.work-card{display:flex;color:var(--text);transition:.2s}a.card:hover,a.work-card:hover{transform:translateY(-4px);border-color:rgba(255,24,32,.72);box-shadow:0 0 34px rgba(255,24,32,.18),0 0 38px rgba(40,169,255,.08);color:var(--text)}
-.btn{display:inline-block;margin-top:20px;background:var(--accent);color:black;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:bold;box-shadow:0 0 22px rgba(255,24,32,.26)}.btn.secondary{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--line)}.button-row{display:flex;flex-wrap:wrap;gap:12px}
-.page-title{max-width:1180px;margin:auto;padding:90px 20px 20px}.page-title h1{font-size:clamp(3rem,7vw,5.2rem);line-height:.94;margin-bottom:12px;letter-spacing:-.06em}.placeholder{background:var(--panel-strong);border:1px dashed rgba(255,255,255,.28);border-radius:22px;padding:34px;backdrop-filter:blur(12px)}
-.video-stack{display:grid;gap:34px}.video-card{padding:0;overflow:hidden;background:linear-gradient(135deg,rgba(7,10,15,.92),rgba(7,10,15,.72));box-shadow:0 18px 70px rgba(0,0,0,.42)}.video-info{padding:24px 28px 30px}.video-info h3{margin:0 0 8px;font-size:clamp(1.6rem,3vw,2.35rem);letter-spacing:-.04em}.video-meta{display:inline-flex;color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}.video-frame{position:relative;width:100%;aspect-ratio:16/9;background:rgba(0,0,0,.65);border-bottom:1px solid var(--line)}.video-frame iframe{position:absolute;inset:0;width:100%;height:100%}
-.year-block{margin-bottom:34px}.year-block h2{border-bottom:1px solid var(--line);padding-bottom:16px}.track-list{display:grid;gap:12px}.track-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;background:rgba(7,10,15,.76);border:1px solid var(--line);border-radius:16px;padding:14px 16px;transition:.2s}.track-row:hover{transform:translateX(4px);border-color:rgba(255,24,32,.72);box-shadow:0 0 24px rgba(255,24,32,.16)}.track-icon{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.08)}.track-name{font-weight:800}.track-note{color:var(--muted);font-size:.86rem}.track-action{color:var(--accent);font-weight:800;font-size:.84rem;white-space:nowrap}
-.gallery-subsection{margin-bottom:48px}.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.gallery-item{position:relative;display:block;overflow:hidden;border-radius:20px;border:1px solid var(--line);background:#000;aspect-ratio:1/1;transition:.2s}.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:.25s}.gallery-item:hover{transform:translateY(-4px);border-color:rgba(255,24,32,.72);box-shadow:0 0 32px rgba(255,24,32,.18)}.gallery-item:hover img{transform:scale(1.055);opacity:.82}.gallery-caption{position:absolute;inset:auto 0 0 0;padding:18px;background:linear-gradient(transparent,rgba(0,0,0,.88))}.gallery-caption h3{margin:0;font-size:1rem}.gallery-caption p{margin:4px 0 0;color:var(--muted);font-size:.82rem}
-.lightbox{display:none;position:fixed;z-index:50;inset:0;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:30px}.lightbox:target{display:flex}.lightbox-content{max-width:min(96vw,1200px);max-height:90vh;text-align:center}.lightbox img{max-width:100%;max-height:78vh;object-fit:contain;border-radius:16px;box-shadow:0 0 50px rgba(255,24,32,.22)}.lightbox-close{position:fixed;top:20px;right:26px;font-size:2rem;color:white}
-.contact-card{background:linear-gradient(135deg,rgba(255,24,32,.14),rgba(40,169,255,.08)),var(--panel-strong)}.platforms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:22px}.socials{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}.socials a{border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.06)}
-
+nav ul{display:flex;gap:22px;list-style:none;padding:0;margin:0}
+a{color:white;text-decoration:none}a:hover{color:var(--accent)}
+.page-title{max-width:1180px;margin:auto;padding:90px 20px 20px}
+.page-title h1{font-size:clamp(3rem,7vw,5.2rem);line-height:.94;margin:0 0 12px;letter-spacing:-.06em}
+.page-title p{color:var(--muted)}
+section{max-width:1180px;margin:auto;padding:40px 20px}
+.video-stack{display:grid;gap:34px}
+.video-card{background:var(--panel);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 18px 70px rgba(0,0,0,.42)}
+.video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-bottom:1px solid var(--line)}
+.video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.video-frame img{width:100%;height:100%;object-fit:cover;display:block}
+.local-video-wrap{position:relative;overflow:hidden;background:#000;border-bottom:1px solid var(--line)}
+.local-video-wrap video{width:100%;display:block;background:#000}
+.video-info{padding:24px 28px 30px}
+.video-meta{display:inline-flex;color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}
+.video-info h3{margin:0 0 8px;font-size:clamp(1.6rem,3vw,2.35rem);letter-spacing:-.04em}
+.video-info p{color:var(--muted);line-height:1.6}
+.btn{display:inline-block;margin-top:20px;background:var(--accent);color:#000;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:bold;box-shadow:0 0 22px rgba(255,24,32,.26)}
+.btn:hover{color:#000;opacity:.92}
+.note{font-size:.92rem;color:var(--muted)}
+.placeholder{background:rgba(7,10,15,.82);border:1px dashed rgba(255,255,255,.28);border-radius:22px;padding:34px}
 footer{text-align:center;padding:40px 20px;border-top:1px solid var(--line);color:var(--muted);background:rgba(0,0,0,.62)}
-@media(max-width:900px){.grid,.work-grid,.gallery-grid,.platforms{grid-template-columns:1fr}.hero{min-height:auto;padding:72px 18px}.hero-panel{padding:26px}nav{align-items:flex-start;gap:16px;flex-direction:column}nav ul{flex-wrap:wrap;gap:14px}.logo{height:70px;max-width:360px}.track-row{grid-template-columns:auto 1fr}.track-action{grid-column:2}}
-/* RELEASE ARTWORK SECTION - LOTUS LABZ */
-.release-artwork-section{max-width:1180px;margin:auto;padding:64px 20px 80px}
-.release-artwork-shell{position:relative;overflow:hidden;border:1px solid rgba(255,24,32,.28);border-radius:28px;background:radial-gradient(circle at 20% 0%,rgba(255,24,32,.18),transparent 32%),radial-gradient(circle at 85% 15%,rgba(0,180,255,.12),transparent 36%),rgba(3,5,9,.86);box-shadow:0 0 55px rgba(255,24,32,.12),0 26px 80px rgba(0,0,0,.48);backdrop-filter:blur(10px);padding:clamp(24px,4vw,46px)}
-.release-artwork-shell::before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,transparent,rgba(255,24,32,.12),transparent),repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 7px);opacity:.55}
-.release-artwork-header{position:relative;z-index:1;max-width:760px;margin-bottom:32px}
-.release-artwork-header .eyebrow{color:#ff1820;font-size:.78rem;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
-.release-artwork-header h2{margin:10px 0;font-size:clamp(2.4rem,6vw,4.9rem);line-height:.92;letter-spacing:-.06em;text-shadow:0 0 28px rgba(255,24,32,.28)}
-.release-artwork-header p{color:#b8c1cc;line-height:1.6;margin:0}
-.release-grid{position:relative;z-index:1;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:18px}
-.release-card{margin:0}
-.release-button{cursor:pointer;position:relative;width:100%;aspect-ratio:1/1;display:block;padding:0;overflow:hidden;border:1px solid rgba(255,255,255,.14);border-radius:18px;background:#000;box-shadow:0 14px 36px rgba(0,0,0,.45)}
-.release-button img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.01);transition:transform .35s ease,filter .35s ease}
-.release-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;padding:16px;opacity:0;background:linear-gradient(to top,rgba(0,0,0,.88),rgba(0,0,0,.08));transition:opacity .28s ease;text-align:left}
-.release-overlay strong{color:#fff;font-size:1rem;line-height:1.1;text-transform:uppercase;letter-spacing:.08em}
-.release-overlay em{color:#ff3038;font-size:.78rem;font-style:normal;font-weight:800;margin-top:5px}
-.release-button:hover,.release-button:focus-visible{border-color:rgba(255,24,32,.75);box-shadow:0 0 0 1px rgba(255,24,32,.4),0 0 34px rgba(255,24,32,.36);outline:none}
-.release-button:hover img,.release-button:focus-visible img{transform:scale(1.075);filter:saturate(1.12) contrast(1.06)}
-.release-button:hover .release-overlay,.release-button:focus-visible .release-overlay{opacity:1}
-.release-lightbox{position:fixed;inset:0;z-index:999;display:none;align-items:center;justify-content:center;padding:72px 24px 36px;background:rgba(0,0,0,.92);backdrop-filter:blur(8px)}
-.release-lightbox[aria-hidden="false"]{display:flex}
-.release-lightbox img{max-width:min(92vw,1100px);max-height:78vh;object-fit:contain;border-radius:18px;border:1px solid rgba(255,24,32,.35);box-shadow:0 0 60px rgba(255,24,32,.22)}
-.release-lightbox-close{position:fixed;top:24px;right:28px;width:44px;height:44px;border:1px solid rgba(255,255,255,.25);border-radius:50%;color:#fff;background:rgba(255,24,32,.22);font-size:32px;line-height:1;cursor:pointer}
-.release-lightbox-caption{position:fixed;left:24px;bottom:24px;color:#fff;background:rgba(0,0,0,.65);border-left:3px solid #ff1820;padding:12px 16px;border-radius:8px}
-.release-lightbox-caption strong{display:block;letter-spacing:.08em;text-transform:uppercase}
-.release-lightbox-caption span{display:block;color:#b8c1cc;margin-top:3px}
-@media(max-width:700px){.release-grid{grid-template-columns:repeat(2,1fr);gap:12px}.release-artwork-shell{border-radius:22px;padding:22px}.release-overlay{opacity:1;padding:12px}}
+@media(max-width:900px){nav{align-items:flex-start;flex-direction:column}nav ul{flex-wrap:wrap;gap:14px}.logo{height:70px;max-width:360px}}
+</style>
+</head>
+<body>
+<header>
+<nav>
+<a href="index.html"><img src="lotus-labz-logo.png" class="logo" alt="Lotus Labz Logo"></a>
+<ul>
+<li><a href="visuals.html">Video Archive</a></li>
+<li><a href="design.html">Visual Design</a></li>
+<li><a href="music.html">Music Library</a></li>
+<li><a href="lotus-labz.html">Lotus Labz</a></li>
+</ul>
+</nav>
+</header>
 
-  
-</style></head><body><header><nav><a href="index.html"><img src="lotus-labz-logo.png" class="logo" alt="Lotus Labz Logo"></a><ul><li><a href="visuals.html">Video Archive</a></li><li><a href="design.html">Visual Design</a></li><li><a href="music.html">Music Library</a></li><li><a href="lotus-labz.html">Lotus Labz</a></li></ul></nav></header><div class="page-title"><h1>Visual Design</h1><p>Album artwork, AI artwork, venue visuals, event flyers, promotional graphics, and branding concepts.</p></div>
-<section class="gallery-subsection" id="album-artwork"><h2>Album Artwork</h2><p class="section-intro">Release covers, single artwork, AI-enhanced art, and music branding visuals.</p><div class="gallery-grid"><a class="gallery-item" href="#la-curacion"><img src="artwork/thumbs/la-curacion-thumb.jpg" alt="LA CURACIÓN album artwork"><div class="gallery-caption"><h3>LA CURACIÓN</h3><p>Pete Salaz & Nissan • Chuya Records</p></div></a></div></section>
-<section class="gallery-subsection" id="venue-visuals"><h2>Venue Visuals</h2><p class="section-intro">Venue flyers, event visuals, projection visuals, and cyberpunk promotional graphics.</p><div class="gallery-grid"><a class="gallery-item" href="#redmonkey-teaser"><img src="artwork/thumbs/redmonkey-teaser-thumb.jpg" alt="RedMonkey teaser flyer"><div class="gallery-caption"><h3>RedMonkey Teaser</h3><p>Pete Salaz • Venue Teaser Flyer</p></div></a><a class="gallery-item" href="#redmonkey-main-flyer"><img src="artwork/thumbs/redmonkey-main-flyer-thumb.jpg" alt="RedMonkey main venue flyer"><div class="gallery-caption"><h3>RedMonkey Main Flyer</h3><p>Pete Salaz • Venue Flyer</p></div></a></div></section>
-<section class="gallery-subsection" id="promotional-design"><h2>Promotional Design</h2><p class="section-intro">Social promos, release announcements, motion poster concepts, and campaign graphics.</p><div class="placeholder"><p>Reserved for future promotional graphics and campaign assets.</p></div></section>
-<div id="la-curacion" class="lightbox"><a href="#" class="lightbox-close">×</a><div class="lightbox-content"><img src="artwork/full/la-curacion.jpg" alt="LA CURACIÓN full artwork"><h3>LA CURACIÓN</h3><p>Album Artwork • Pete Salaz & Nissan • Chuya Records</p></div></div>
-<div id="redmonkey-teaser" class="lightbox"><a href="#" class="lightbox-close">×</a><div class="lightbox-content"><img src="artwork/full/redmonkey-teaser.jpg" alt="RedMonkey teaser flyer full artwork"><h3>RedMonkey Teaser Flyer</h3><p>Venue Visuals • Pete Salaz</p></div></div>
-<div id="redmonkey-main-flyer" class="lightbox"><a href="#" class="lightbox-close">×</a><div class="lightbox-content"><img src="artwork/full/redmonkey-main-flyer.jpg" alt="RedMonkey main venue flyer full artwork"><h3>RedMonkey Main Venue Flyer</h3><p>Venue Visuals • Pete Salaz</p></div></div>
-<!-- RELEASE ARTWORK SECTION - LOTUS LABZ -->
-<section class="release-artwork-section" id="release-artwork">
-  <div class="release-artwork-shell">
-    <div class="release-artwork-header">
-      <span class="eyebrow">Lotus Labz Visual Design</span>
-      <h2>Release Artwork</h2>
-      <p>Immersive cover artwork created for singles, albums, and sonic identities.</p>
-    </div>
+<div class="page-title">
+<h1>Video Archive</h1>
+<p>Newest to oldest — embedded music videos, motion visuals, and venue projection work from Lotus Labz / Jynxer23.</p>
+</div>
 
-    <div class="release-grid">
-      <article class="release-card" data-title="No More Tears" data-artist="Jynxer23" data-full="artwork/release-art/web/no-more-tears-web.jpg">
-        <button class="release-button" type="button" aria-label="Open No More Tears artwork">
-          <img src="artwork/release-art/thumbs/no-more-tears-thumb.jpg" alt="No More Tears release artwork">
-          <span class="release-overlay">
-            <strong>No More Tears</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="Obsidian" data-artist="Jynxer23" data-full="artwork/release-art/web/obsidian-web.jpg">
-        <button class="release-button" type="button" aria-label="Open Obsidian artwork">
-          <img src="artwork/release-art/thumbs/obsidian-thumb.jpg" alt="Obsidian release artwork">
-          <span class="release-overlay">
-            <strong>Obsidian</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="GATITO" data-artist="Jynxer23" data-full="artwork/release-art/web/gatito-web.jpg">
-        <button class="release-button" type="button" aria-label="Open GATITO artwork">
-          <img src="artwork/release-art/thumbs/gatito-thumb.jpg" alt="GATITO release artwork">
-          <span class="release-overlay">
-            <strong>GATITO</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="Sound the Alarms" data-artist="Jynxer23" data-full="artwork/release-art/web/sound-the-alarms-web.jpg">
-        <button class="release-button" type="button" aria-label="Open Sound the Alarms artwork">
-          <img src="artwork/release-art/thumbs/sound-the-alarms-thumb.jpg" alt="Sound the Alarms release artwork">
-          <span class="release-overlay">
-            <strong>Sound the Alarms</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="Don’t Stop" data-artist="Jynxer23" data-full="artwork/release-art/web/dont-stop-web.jpg">
-        <button class="release-button" type="button" aria-label="Open Don’t Stop artwork">
-          <img src="artwork/release-art/thumbs/dont-stop-thumb.jpg" alt="Don’t Stop release artwork">
-          <span class="release-overlay">
-            <strong>Don’t Stop</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="Mind Control" data-artist="Jynxer23" data-full="artwork/release-art/web/mind-control-web.jpg">
-        <button class="release-button" type="button" aria-label="Open Mind Control artwork">
-          <img src="artwork/release-art/thumbs/mind-control-thumb.jpg" alt="Mind Control release artwork">
-          <span class="release-overlay">
-            <strong>Mind Control</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="Bubblegum" data-artist="Jynxer23" data-full="artwork/release-art/web/bubblegum-web.jpg">
-        <button class="release-button" type="button" aria-label="Open Bubblegum artwork">
-          <img src="artwork/release-art/thumbs/bubblegum-thumb.jpg" alt="Bubblegum release artwork">
-          <span class="release-overlay">
-            <strong>Bubblegum</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="Celestial Code" data-artist="Jynxer23" data-full="artwork/release-art/web/celestial-code-web.jpg">
-        <button class="release-button" type="button" aria-label="Open Celestial Code artwork">
-          <img src="artwork/release-art/thumbs/celestial-code-thumb.jpg" alt="Celestial Code release artwork">
-          <span class="release-overlay">
-            <strong>Celestial Code</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="Rise Again" data-artist="Jynxer23" data-full="artwork/release-art/web/rise-again-web.jpg">
-        <button class="release-button" type="button" aria-label="Open Rise Again artwork">
-          <img src="artwork/release-art/thumbs/rise-again-thumb.jpg" alt="Rise Again release artwork">
-          <span class="release-overlay">
-            <strong>Rise Again</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="SHIFT" data-artist="Jynxer23" data-full="artwork/release-art/web/shift-web.jpg">
-        <button class="release-button" type="button" aria-label="Open SHIFT artwork">
-          <img src="artwork/release-art/thumbs/shift-thumb.jpg" alt="SHIFT release artwork">
-          <span class="release-overlay">
-            <strong>SHIFT</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="La Curación" data-artist="Pete Salaz, Nissan" data-full="artwork/release-art/web/la-curaci-n-web.jpg">
-        <button class="release-button" type="button" aria-label="Open La Curación artwork">
-          <img src="artwork/release-art/thumbs/la-curaci-n-thumb.jpg" alt="La Curación release artwork">
-          <span class="release-overlay">
-            <strong>La Curación</strong>
-            <em>Pete Salaz, Nissan</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="Keep It Moving" data-artist="Jynxer23" data-full="artwork/release-art/web/keep-it-moving-web.jpg">
-        <button class="release-button" type="button" aria-label="Open Keep It Moving artwork">
-          <img src="artwork/release-art/thumbs/keep-it-moving-thumb.jpg" alt="Keep It Moving release artwork">
-          <span class="release-overlay">
-            <strong>Keep It Moving</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="777" data-artist="Jynxer23" data-full="artwork/release-art/web/777-web.jpg">
-        <button class="release-button" type="button" aria-label="Open 777 artwork">
-          <img src="artwork/release-art/thumbs/777-thumb.jpg" alt="777 release artwork">
-          <span class="release-overlay">
-            <strong>777</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="Elysium" data-artist="Jynxer23" data-full="artwork/release-art/web/elysium-web.jpg">
-        <button class="release-button" type="button" aria-label="Open Elysium artwork">
-          <img src="artwork/release-art/thumbs/elysium-thumb.jpg" alt="Elysium release artwork">
-          <span class="release-overlay">
-            <strong>Elysium</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="Cosmik" data-artist="Jynxer23" data-full="artwork/release-art/web/cosmik-web.jpg">
-        <button class="release-button" type="button" aria-label="Open Cosmik artwork">
-          <img src="artwork/release-art/thumbs/cosmik-thumb.jpg" alt="Cosmik release artwork">
-          <span class="release-overlay">
-            <strong>Cosmik</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="Bend Your Back" data-artist="Jynxer23" data-full="artwork/release-art/web/bend-your-back-web.jpg">
-        <button class="release-button" type="button" aria-label="Open Bend Your Back artwork">
-          <img src="artwork/release-art/thumbs/bend-your-back-thumb.jpg" alt="Bend Your Back release artwork">
-          <span class="release-overlay">
-            <strong>Bend Your Back</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-      <article class="release-card" data-title="The Beckoning" data-artist="Jynxer23" data-full="artwork/release-art/web/the-beckoning-web.jpg">
-        <button class="release-button" type="button" aria-label="Open The Beckoning artwork">
-          <img src="artwork/release-art/thumbs/the-beckoning-thumb.jpg" alt="The Beckoning release artwork">
-          <span class="release-overlay">
-            <strong>The Beckoning</strong>
-            <em>Jynxer23</em>
-          </span>
-        </button>
-      </article>
-    </div>
-  </div>
+<section>
+<div class="video-stack">
 
-  <div class="release-lightbox" id="releaseLightbox" aria-hidden="true">
-    <button class="release-lightbox-close" type="button" aria-label="Close artwork">×</button>
-    <img id="releaseLightboxImage" src="" alt="">
-    <div class="release-lightbox-caption">
-      <strong id="releaseLightboxTitle"></strong>
-      <span id="releaseLightboxArtist"></span>
-    </div>
-  </div>
+<article class="video-card">
+<div class="video-frame"><img src="artwork/dont-stop-video-coming-tile.png" alt="Don't Stop - Jynxer23 Coming Soon"></div>
+<div class="video-info"><div class="video-meta">Static Audio • Official Video Coming Soon</div><h3>Don’t Stop</h3><p>Newest release. Listen to the static audio version while the official music video is pending.</p><a class="btn" href="https://www.youtube.com/watch?v=3OFf7OvZlYQ&list=RD3OFf7OvZlYQ&start_radio=1" target="_blank" rel="noopener">Listen on YouTube</a></div>
+</article>
+
+<article class="video-card">
+<div class="video-frame"><iframe src="https://www.youtube.com/embed/7hF2j-igCzA" title="GATITO" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+<div class="video-info"><div class="video-meta">Official Music Video</div><h3>GATITO</h3><p>Embedded directly from YouTube, presented inside the Lotus Labz video archive.</p><a class="btn" href="https://www.youtube.com/watch?v=7hF2j-igCzA&list=RD7hF2j-igCzA&start_radio=1" target="_blank" rel="noopener">Watch on YouTube</a></div>
+</article>
+
+<article class="video-card">
+<div class="video-frame"><iframe src="https://www.youtube.com/embed/biUP9cZMuA8" title="SHIFT" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+<div class="video-info"><div class="video-meta">Official Music Video</div><h3>SHIFT</h3><p>Embedded directly from YouTube, presented inside the Lotus Labz video archive.</p><a class="btn" href="https://www.youtube.com/watch?v=biUP9cZMuA8&list=OLAK5uy_nV5qFXJpHCGVwIBc-SxZ9LST4q2ZunYmY" target="_blank" rel="noopener">Watch on YouTube</a></div>
+</article>
+
+<article class="video-card">
+<div class="video-frame"><iframe src="https://www.youtube.com/embed/dDyzxAHObX8" title="Celestial Code" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+<div class="video-info"><div class="video-meta">Official Music Video</div><h3>Celestial Code</h3><p>Embedded directly from YouTube, presented inside the Lotus Labz video archive.</p><a class="btn" href="https://www.youtube.com/watch?v=dDyzxAHObX8&list=OLAK5uy_mR_iHvUWeGlhF4qdj2J7S4QS4XO0dfFX4" target="_blank" rel="noopener">Watch on YouTube</a></div>
+</article>
+
+<article class="video-card">
+<div class="video-frame"><iframe src="https://www.youtube.com/embed/904VDL-FdVo" title="Sound the Alarms" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+<div class="video-info"><div class="video-meta">Official Music Video</div><h3>Sound the Alarms</h3><p>Embedded directly from YouTube, presented inside the Lotus Labz video archive.</p><a class="btn" href="https://www.youtube.com/watch?v=904VDL-FdVo&list=OLAK5uy_nDYXYBaVTsol-IUa4rRH0ARczf2noD2y8" target="_blank" rel="noopener">Watch on YouTube</a></div>
+</article>
+
+<article class="video-card">
+<div class="video-frame"><iframe src="https://www.youtube.com/embed/tQQeqqP8Tek" title="Mind Control" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+<div class="video-info"><div class="video-meta">Official Music Video</div><h3>Mind Control</h3><p>Embedded directly from YouTube, presented inside the Lotus Labz video archive.</p><a class="btn" href="https://www.youtube.com/watch?v=tQQeqqP8Tek&list=OLAK5uy_k9AKyerpkjoF5cPhU6HDQI-CZJTCKaAdk" target="_blank" rel="noopener">Watch on YouTube</a></div>
+</article>
+
+<article class="video-card" id="projection">
+<div class="local-video-wrap"><video controls playsinline preload="metadata" poster="artwork/thumbs/redmonkey-projection-wide.jpg"><source src="media/redmonkey-projection-visuals.mp4" type="video/mp4">Your browser does not support the video tag.</video></div>
+<div class="video-info"><div class="video-meta">Venue Projection Visuals</div><h3>RedMonkey Projection Visuals</h3><p>Projection visuals created for Pete Salaz / RedMonkey — immersive event media designed for venue playback and atmospheric visual support.</p><p class="note">Presented as a native Lotus Labz portfolio experience.</p></div>
+</article>
+
+</div>
 </section>
 
-<script>
-(function () {
-  const lightbox = document.getElementById('releaseLightbox');
-  const img = document.getElementById('releaseLightboxImage');
-  const title = document.getElementById('releaseLightboxTitle');
-  const artist = document.getElementById('releaseLightboxArtist');
-  const close = document.querySelector('.release-lightbox-close');
+<section id="reels"><div class="placeholder"><h2>Reels & Spotify Canvas Coming Next</h2><p>This section is reserved for vertical reels, short-form promos, and Spotify Canvas examples.</p></div></section>
 
-  document.querySelectorAll('.release-card').forEach(card => {
-    card.querySelector('button').addEventListener('click', () => {
-      img.src = card.dataset.full;
-      img.alt = card.dataset.title + ' release artwork';
-      title.textContent = card.dataset.title;
-      artist.textContent = card.dataset.artist;
-      lightbox.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-    });
-  });
-
-  function closeLightbox() {
-    lightbox.setAttribute('aria-hidden', 'true');
-    img.src = '';
-    document.body.style.overflow = '';
-  }
-
-  close.addEventListener('click', closeLightbox);
-  lightbox.addEventListener('click', event => {
-    if (event.target === lightbox) closeLightbox();
-  });
-  document.addEventListener('keydown', event => {
-    if (event.key === 'Escape') closeLightbox();
-  });
-})();
-</script>
-
-<footer>© 2026 Lotus Labz — Electronic Music • AI Art • Cybernetic Media</footer></body></html>
+<footer>© 2026 Lotus Labz — Electronic Music • AI Art • Cybernetic Media</footer>
+</body>
+</html>
