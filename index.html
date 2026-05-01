@@ -1,25 +1,101 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Lotus Labz | Electronic Music • AI Art • Cybernetic Media</title><meta name="description" content="Lotus Labz merges electronic music, AI art, cybernetic media, and immersive multimedia design."/><style>
-:root{--bg:#040508;--panel:rgba(7,10,15,.78);--panel-strong:rgba(7,10,15,.9);--text:#f7f8fb;--muted:#b8c1cc;--accent:#ff1820;--blue:#28a9ff;--line:rgba(255,255,255,.13)}
-*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(rgba(4,5,8,.70),rgba(4,5,8,.94)),url("background.jpg") center/cover fixed no-repeat;color:var(--text);line-height:1.6}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 30% 18%,rgba(255,24,32,.18),transparent 34%),radial-gradient(circle at 72% 22%,rgba(40,169,255,.15),transparent 30%),linear-gradient(90deg,rgba(0,0,0,.35),rgba(0,0,0,.08),rgba(0,0,0,.38));z-index:-1}
-header{padding:34px 22px;border-bottom:1px solid var(--line);background:rgba(0,0,0,.8);backdrop-filter:blur(14px);position:sticky;top:0;z-index:10}
-nav{display:flex;justify-content:space-between;align-items:center;max-width:1180px;margin:auto;gap:24px}nav ul{display:flex;list-style:none;gap:22px;padding:0;margin:0}nav a,a{color:white;text-decoration:none}nav a:hover,a:hover{color:var(--accent)}
-.logo{height:380px;max-width:1400px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(255,24,32,.55))}
-.hero{min-height:calc(100vh - 130px);max-width:1180px;margin:auto;padding:95px 20px 86px;display:flex;align-items:center}.hero-panel{max-width:1400px;padding:70px;background:linear-gradient(135deg,rgba(0,0,0,.76),rgba(10,13,18,.5));border:1px solid rgba(255,255,255,.15);border-radius:28px;box-shadow:0 24px 90px rgba(0,0,0,.62);backdrop-filter:blur(10px)}.hero-brand{width:min(100%,1800px);margin-bottom:24px;filter:drop-shadow(0 0 22px rgba(255,24,32,.55))}
-.kicker{color:var(--accent);text-transform:uppercase;letter-spacing:.16em;font-weight:900;font-size:1.6rem;margin-bottom:18px}.hero h1{font-size:clamp(1.75rem,4vw,2.85rem);line-height:1.02;margin:0 0 20px;letter-spacing:-.04em}.hero p{color:var(--muted);font-size:1.1rem;max-width:720px}
-section{max-width:1180px;margin:auto;padding:72px 20px}section h2{font-size:2.35rem;line-height:1;margin-top:0;letter-spacing:-.04em}.section-intro{color:var(--muted);max-width:820px;margin-bottom:28px}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}.work-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.card,.work-card,.video-card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:30px;backdrop-filter:blur(12px)}.work-card{min-height:210px;display:flex;flex-direction:column;justify-content:flex-end;background:linear-gradient(180deg,rgba(255,24,32,.14),rgba(0,0,0,.76)),rgba(7,10,15,.82)}.work-card h3{margin:0 0 8px}.work-card p,.card p,.page-title p,.placeholder p,.video-card p{color:var(--muted)}a.card,a.work-card{display:flex;color:var(--text);transition:.2s}a.card:hover,a.work-card:hover{transform:translateY(-4px);border-color:rgba(255,24,32,.72);box-shadow:0 0 34px rgba(255,24,32,.18),0 0 38px rgba(40,169,255,.08);color:var(--text)}
-.btn{display:inline-block;margin-top:20px;background:var(--accent);color:black;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:bold;box-shadow:0 0 22px rgba(255,24,32,.26)}.btn.secondary{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--line)}.button-row{display:flex;flex-wrap:wrap;gap:12px}
-.page-title{max-width:1180px;margin:auto;padding:90px 20px 20px}.page-title h1{font-size:clamp(3rem,7vw,5.2rem);line-height:.94;margin-bottom:12px;letter-spacing:-.06em}.placeholder{background:var(--panel-strong);border:1px dashed rgba(255,255,255,.28);border-radius:22px;padding:34px;backdrop-filter:blur(12px)}
-.video-stack{display:grid;gap:34px}.video-card{padding:0;overflow:hidden;background:linear-gradient(135deg,rgba(7,10,15,.92),rgba(7,10,15,.72));box-shadow:0 18px 70px rgba(0,0,0,.42)}.video-info{padding:24px 28px 30px}.video-info h3{margin:0 0 8px;font-size:clamp(1.6rem,3vw,2.35rem);letter-spacing:-.04em}.video-meta{display:inline-flex;color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}.video-frame{position:relative;width:100%;aspect-ratio:16/9;background:rgba(0,0,0,.65);border-bottom:1px solid var(--line)}.video-frame iframe{position:absolute;inset:0;width:100%;height:100%}
-.year-block{margin-bottom:34px}.year-block h2{border-bottom:1px solid var(--line);padding-bottom:16px}.track-list{display:grid;gap:12px}.track-row{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:14px;background:rgba(7,10,15,.76);border:1px solid var(--line);border-radius:16px;padding:14px 16px;transition:.2s}.track-row:hover{transform:translateX(4px);border-color:rgba(255,24,32,.72);box-shadow:0 0 24px rgba(255,24,32,.16)}.track-icon{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.08)}.track-name{font-weight:800}.track-note{color:var(--muted);font-size:.86rem}.track-action{color:var(--accent);font-weight:800;font-size:.84rem;white-space:nowrap}
-.gallery-subsection{margin-bottom:48px}.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.gallery-item{position:relative;display:block;overflow:hidden;border-radius:20px;border:1px solid var(--line);background:#000;aspect-ratio:1/1;transition:.2s}.gallery-item img{width:100%;height:100%;object-fit:cover;display:block;transition:.25s}.gallery-item:hover{transform:translateY(-4px);border-color:rgba(255,24,32,.72);box-shadow:0 0 32px rgba(255,24,32,.18)}.gallery-item:hover img{transform:scale(1.055);opacity:.82}.gallery-caption{position:absolute;inset:auto 0 0 0;padding:18px;background:linear-gradient(transparent,rgba(0,0,0,.88))}.gallery-caption h3{margin:0;font-size:1rem}.gallery-caption p{margin:4px 0 0;color:var(--muted);font-size:.82rem}
-.lightbox{display:none;position:fixed;z-index:50;inset:0;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:30px}.lightbox:target{display:flex}.lightbox-content{max-width:min(96vw,1200px);max-height:90vh;text-align:center}.lightbox img{max-width:100%;max-height:78vh;object-fit:contain;border-radius:16px;box-shadow:0 0 50px rgba(255,24,32,.22)}.lightbox-close{position:fixed;top:20px;right:26px;font-size:2rem;color:white}
-.contact-card{background:linear-gradient(135deg,rgba(255,24,32,.14),rgba(40,169,255,.08)),var(--panel-strong)}.platforms{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin-top:22px}.socials{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px}.socials a{border:1px solid var(--line);border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.06)}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Video Archive | Lotus Labz</title>
+<style>
+:root{--panel:rgba(7,10,15,.82);--text:#f7f8fb;--muted:#b8c1cc;--accent:#ff1820;--line:rgba(255,255,255,.13)}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(rgba(4,5,8,.70),rgba(4,5,8,.94)),url("background.jpg") center/cover fixed no-repeat;color:var(--text)}
+header{padding:18px 22px;border-bottom:1px solid var(--line);background:rgba(0,0,0,.82);position:sticky;top:0;z-index:10}
+nav{max-width:1180px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.logo{height:96px;max-width:520px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(255,24,32,.55));transform:scale(4);transform-origin:left center}
+nav ul{display:flex;gap:22px;list-style:none;padding:0;margin:0}
+a{color:white;text-decoration:none}a:hover{color:var(--accent)}
+.page-title{max-width:1180px;margin:auto;padding:90px 20px 20px}
+.page-title h1{font-size:clamp(3rem,7vw,5.2rem);line-height:.94;margin:0 0 12px;letter-spacing:-.06em}
+.page-title p{color:var(--muted)}
+section{max-width:1180px;margin:auto;padding:40px 20px}
+.video-stack{display:grid;gap:34px}
+.video-card{background:var(--panel);border:1px solid var(--line);border-radius:22px;overflow:hidden;box-shadow:0 18px 70px rgba(0,0,0,.42)}
+.video-frame{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-bottom:1px solid var(--line)}
+.video-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.local-video-wrap{position:relative;overflow:hidden;background:#000;border-bottom:1px solid var(--line)}
+.local-video-wrap video{width:100%;display:block;background:#000}
+.video-info{padding:24px 28px 30px}
+.video-meta{display:inline-flex;color:var(--accent);font-size:.78rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;margin-bottom:12px}
+.video-info h3{margin:0 0 8px;font-size:clamp(1.6rem,3vw,2.35rem);letter-spacing:-.04em}
+.video-info p{color:var(--muted);line-height:1.6}
+.btn{display:inline-block;margin-top:20px;background:var(--accent);color:#000;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:bold;box-shadow:0 0 22px rgba(255,24,32,.26)}
+.btn:hover{color:#000;opacity:.92}
+.note{font-size:.92rem;color:var(--muted)}
+.placeholder{background:rgba(7,10,15,.82);border:1px dashed rgba(255,255,255,.28);border-radius:22px;padding:34px}
 footer{text-align:center;padding:40px 20px;border-top:1px solid var(--line);color:var(--muted);background:rgba(0,0,0,.62)}
-@media(max-width:900px){.grid,.work-grid,.gallery-grid,.platforms{grid-template-columns:1fr}.hero{min-height:auto;padding:72px 18px}.hero-panel{padding:26px}nav{align-items:flex-start;gap:16px;flex-direction:column}nav ul{flex-wrap:wrap;gap:14px}.logo{height:120px;max-width:700px}.track-row{grid-template-columns:auto 1fr}.track-action{grid-column:2}}
-</style></head><body><header><nav><a href="index.html"><img src="lotus-labz-logo.png" class="logo" alt="Lotus Labz Logo"></a><ul><li><a href="visuals.html">Video Archive</a></li><li><a href="design.html">Visual Design</a></li><li><a href="music.html">Music Library</a></li><li><a href="lotus-labz.html">Lotus Labz</a></li></ul></nav></header>
-<section class="hero"><div class="hero-panel"><img src="lotus-labz-logo.png" class="hero-brand" alt="Lotus Labz"><div class="kicker">Electronic Music • AI Art • Cybernetic Media</div><h1>Where sound design meets future visuals.</h1><p>Lotus Labz merges electronic music, AI-driven visuals, and immersive multimedia design into future-focused creative experiences.</p><div class="button-row"><a class="btn" href="visuals.html">Watch Videos</a><a class="btn secondary" href="design.html">View Visual Design</a></div></div></section>
-<section id="work"><h2>Explore Portfolio</h2><p class="section-intro">Four focused paths through the Lotus Labz ecosystem: moving visuals, static design work, release history, and the creative identity behind the project.</p><div class="work-grid"><a class="work-card" href="visuals.html"><h3>Video Archive</h3><p>Music videos, reels, canvas examples, projection visuals, and motion work.</p></a><a class="work-card" href="design.html"><h3>Visual Design</h3><p>Album artwork, venue visuals, flyers, promotional graphics, and AI art.</p></a><a class="work-card" href="music.html"><h3>Music Library</h3><p>2024–2026 releases with audio/video links organized by year.</p></a><a class="work-card" href="lotus-labz.html"><h3>Lotus Labz</h3><p>Creative philosophy, services, collaborations, contact, and future projects.</p></a></div></section>
-<section id="contact"><div class="card contact-card"><h2>Contact Us</h2><p>Interested in collaborating or bringing a visual concept to life? Lotus Labz is available for album artwork, music visuals, venue projection visuals, promotional design, multimedia branding, and creative collaborations.</p><a class="btn" href="mailto:jynx@lotuslabz.net">Email Lotus Labz</a><div class="platforms"><div><h3>Listen</h3><div class="socials"><a href="https://open.spotify.com/artist/1IHrpVkPW9ubfXyLaTSTbT?si=lDyLz0TPRCCQdSiR8ipe6Q" target="_blank">Spotify</a><a href="https://music.apple.com/us/artist/jynxer23/1738558885" target="_blank">Apple Music</a><a href="https://www.beatport.com/search?q=jynxer23" target="_blank">Beatport</a><a href="https://soundcloud.com/jynxer23" target="_blank">SoundCloud</a></div></div><div><h3>Connect</h3><div class="socials"><a href="https://www.youtube.com/@jamiesako3502" target="_blank">YouTube</a><a href="https://www.instagram.com/jynxer23/" target="_blank">Instagram</a><a href="https://www.facebook.com/jynxer23/" target="_blank">Facebook</a><a href="mailto:jynx@lotuslabz.net">Email</a></div></div></div></div></section>
-<footer>© 2026 Lotus Labz — Electronic Music • AI Art • Cybernetic Media</footer></body></html>
+@media(max-width:900px){nav{align-items:flex-start;flex-direction:column}nav ul{flex-wrap:wrap;gap:14px}.logo{height:70px;max-width:360px;transform:scale(1.4);transform-origin:left center}}
+</style>
+</head>
+<body>
+<header>
+<nav>
+<a href="index.html"><img src="lotus-labz-logo.png" class="logo" alt="Lotus Labz Logo"></a>
+<ul>
+<li><a href="visuals.html">Video Archive</a></li>
+<li><a href="design.html">Visual Design</a></li>
+<li><a href="music.html">Music Library</a></li>
+<li><a href="lotus-labz.html">Lotus Labz</a></li>
+</ul>
+</nav>
+</header>
+
+<div class="page-title">
+<h1>Video Archive</h1>
+<p>Newest to oldest — embedded music videos, motion visuals, and venue projection work from Lotus Labz / Jynxer23.</p>
+</div>
+
+<section>
+<div class="video-stack">
+
+<article class="video-card">
+<div class="video-frame"><iframe src="https://www.youtube.com/embed/3OFf7OvZlYQ" title="Don’t Stop" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+<div class="video-info"><div class="video-meta">Static Audio • Official Video Coming Later</div><h3>Don’t Stop</h3><p>Newest release. This is the static audio version while the official music video is pending.</p><a class="btn" href="https://www.youtube.com/watch?v=3OFf7OvZlYQ&list=RD3OFf7OvZlYQ&start_radio=1" target="_blank" rel="noopener">Listen on YouTube</a></div>
+</article>
+
+<article class="video-card">
+<div class="video-frame"><iframe src="https://www.youtube.com/embed/7hF2j-igCzA" title="GATITO" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+<div class="video-info"><div class="video-meta">Official Music Video</div><h3>GATITO</h3><p>Embedded directly from YouTube, presented inside the Lotus Labz video archive.</p><a class="btn" href="https://www.youtube.com/watch?v=7hF2j-igCzA&list=RD7hF2j-igCzA&start_radio=1" target="_blank" rel="noopener">Watch on YouTube</a></div>
+</article>
+
+<article class="video-card">
+<div class="video-frame"><iframe src="https://www.youtube.com/embed/biUP9cZMuA8" title="SHIFT" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+<div class="video-info"><div class="video-meta">Official Music Video</div><h3>SHIFT</h3><p>Embedded directly from YouTube, presented inside the Lotus Labz video archive.</p><a class="btn" href="https://www.youtube.com/watch?v=biUP9cZMuA8&list=OLAK5uy_nV5qFXJpHCGVwIBc-SxZ9LST4q2ZunYmY" target="_blank" rel="noopener">Watch on YouTube</a></div>
+</article>
+
+<article class="video-card">
+<div class="video-frame"><iframe src="https://www.youtube.com/embed/dDyzxAHObX8" title="Celestial Code" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+<div class="video-info"><div class="video-meta">Official Music Video</div><h3>Celestial Code</h3><p>Embedded directly from YouTube, presented inside the Lotus Labz video archive.</p><a class="btn" href="https://www.youtube.com/watch?v=dDyzxAHObX8&list=OLAK5uy_mR_iHvUWeGlhF4qdj2J7S4QS4XO0dfFX4" target="_blank" rel="noopener">Watch on YouTube</a></div>
+</article>
+
+<article class="video-card">
+<div class="video-frame"><iframe src="https://www.youtube.com/embed/904VDL-FdVo" title="Sound the Alarms" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+<div class="video-info"><div class="video-meta">Official Music Video</div><h3>Sound the Alarms</h3><p>Embedded directly from YouTube, presented inside the Lotus Labz video archive.</p><a class="btn" href="https://www.youtube.com/watch?v=904VDL-FdVo&list=OLAK5uy_nDYXYBaVTsol-IUa4rRH0ARczf2noD2y8" target="_blank" rel="noopener">Watch on YouTube</a></div>
+</article>
+
+<article class="video-card">
+<div class="video-frame"><iframe src="https://www.youtube.com/embed/tQQeqqP8Tek" title="Mind Control" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe></div>
+<div class="video-info"><div class="video-meta">Official Music Video</div><h3>Mind Control</h3><p>Embedded directly from YouTube, presented inside the Lotus Labz video archive.</p><a class="btn" href="https://www.youtube.com/watch?v=tQQeqqP8Tek&list=OLAK5uy_k9AKyerpkjoF5cPhU6HDQI-CZJTCKaAdk" target="_blank" rel="noopener">Watch on YouTube</a></div>
+</article>
+
+<article class="video-card" id="projection">
+<div class="local-video-wrap"><video controls playsinline preload="metadata" poster="artwork/thumbs/redmonkey-main-flyer-thumb.jpg"><source src="media/redmonkey-projection-visuals.mp4" type="video/mp4">Your browser does not support the video tag.</video></div>
+<div class="video-info"><div class="video-meta">Venue Projection Visuals</div><h3>RedMonkey Projection Visuals</h3><p>Projection visuals created for Pete Salaz / RedMonkey — immersive event media designed for venue playback and atmospheric visual support.</p><p class="note">Presented as a native Lotus Labz portfolio experience.</p></div>
+</article>
+
+</div>
+</section>
+
+<section id="reels"><div class="placeholder"><h2>Reels & Spotify Canvas Coming Next</h2><p>This section is reserved for vertical reels, short-form promos, and Spotify Canvas examples.</p></div></section>
+
+<footer>© 2026 Lotus Labz — Electronic Music • AI Art • Cybernetic Media</footer>
+</body>
+</html>
