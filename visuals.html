@@ -10,7 +10,7 @@
 body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(rgba(4,5,8,.70),rgba(4,5,8,.94)),url("background.jpg") center/cover fixed no-repeat;color:var(--text)}
 header{padding:18px 22px;border-bottom:1px solid var(--line);background:rgba(0,0,0,.82);position:sticky;top:0;z-index:10}
 nav{max-width:1180px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
-.logo{height:96px;max-width:520px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(255,24,32,.55))}
+.logo{height:96px;max-width:520px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(255,24,32,.55));transform:scale(3);transform-origin:left center}
 nav ul{display:flex;gap:22px;list-style:none;padding:0;margin:0}
 a{color:white;text-decoration:none}a:hover{color:var(--accent)}
 .page-title{max-width:1180px;margin:auto;padding:90px 20px 20px}
@@ -33,7 +33,7 @@ section{max-width:1180px;margin:auto;padding:40px 20px}
 .note{font-size:.92rem;color:var(--muted)}
 .placeholder{background:rgba(7,10,15,.82);border:1px dashed rgba(255,255,255,.28);border-radius:22px;padding:34px}
 footer{text-align:center;padding:40px 20px;border-top:1px solid var(--line);color:var(--muted);background:rgba(0,0,0,.62)}
-@media(max-width:900px){nav{align-items:flex-start;flex-direction:column}nav ul{flex-wrap:wrap;gap:14px}.logo{height:70px;max-width:360px}}
+@media(max-width:900px){nav{align-items:flex-start;flex-direction:column}nav ul{flex-wrap:wrap;gap:14px}.logo{height:70px;max-width:360px;transform:scale(1.4);transform-origin:left center}}
 </style>
 </head>
 <body>
