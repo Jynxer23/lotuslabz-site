@@ -1,110 +1,399 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Signal Void Chamber | Lotus Labz</title>
-  <link rel="stylesheet" href="style.css" />
+  <style>
+    :root {
+      --white: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.5);
+      --red: rgba(255, 35, 60, 0.72);
+      --blue: rgba(80, 160, 255, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 50% 48%, rgba(255,255,255,.08), transparent 28%),
+        radial-gradient(circle at 38% 52%, rgba(255,35,60,.14), transparent 38%),
+        radial-gradient(circle at 62% 48%, rgba(80,160,255,.10), transparent 38%),
+        linear-gradient(180deg, #020202, #000 48%, #030303);
+      animation: voidBreath 8s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.026) 0px,
+          rgba(255,255,255,.026) 1px,
+          transparent 2px,
+          transparent 5px
+        );
+      opacity: .55;
+      mix-blend-mode: screen;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.18) 42%, rgba(0,0,0,.92) 100%),
+        linear-gradient(to top, rgba(0,0,0,.82), transparent 42%),
+        linear-gradient(to bottom, rgba(0,0,0,.62), transparent 36%);
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .brand {
+      position: fixed;
+      z-index: 12;
+      left: 34px;
+      top: 30px;
+      color: rgba(255,255,255,.42);
+      font-size: 11px;
+      letter-spacing: .52em;
+      text-transform: uppercase;
+    }
+
+    .exit {
+      position: fixed;
+      z-index: 12;
+      right: 34px;
+      top: 30px;
+      color: rgba(255,255,255,.36);
+      font-size: 11px;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: color .35s ease;
+    }
+
+    .exit:hover { color: rgba(255,255,255,.8); }
+
+    .stage {
+      position: relative;
+      z-index: 3;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      place-items: center;
+      cursor: crosshair;
+    }
+
+    .relic-wrap {
+      position: relative;
+      width: min(94vw, 1320px);
+      aspect-ratio: 16 / 9;
+      display: grid;
+      place-items: center;
+      transform: scale(.96);
+      opacity: 0;
+      animation: arrival 2.8s ease forwards .25s;
+      transition: transform .18s ease-out, filter .18s ease-out;
+    }
+
+    .relic-wrap.active {
+      filter: brightness(1.15) contrast(1.12) saturate(1.08);
+    }
+
+    video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: brightness(.78) contrast(1.12) saturate(.95);
+      opacity: .92;
+      mix-blend-mode: screen;
+      transform: scale(1.02);
+      transition: filter .45s ease, opacity .45s ease;
+    }
+
+    .relic-wrap.active video {
+      filter: brightness(1.05) contrast(1.22) saturate(1.12);
+      opacity: 1;
+    }
+
+    .relic-glow {
+      position: absolute;
+      width: 58%;
+      height: 58%;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle, rgba(255,255,255,.12), transparent 46%),
+        radial-gradient(circle at 45% 50%, rgba(255,35,60,.22), transparent 42%),
+        radial-gradient(circle at 58% 52%, rgba(80,160,255,.12), transparent 42%);
+      filter: blur(72px);
+      opacity: .52;
+      animation: pulseGlow 5s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .activation-ring {
+      position: absolute;
+      width: 56%;
+      aspect-ratio: 1;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 0 90px rgba(255,255,255,.045);
+      animation: ringPulse 7s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .activation-ring.two {
+      width: 68%;
+      border-color: rgba(255,35,60,.08);
+      animation-duration: 9s;
+      animation-direction: reverse;
+    }
+
+    .transmission {
+      position: fixed;
+      z-index: 12;
+      left: 50%;
+      bottom: 92px;
+      transform: translateX(-50%) translateY(8px);
+      min-height: 20px;
+      opacity: 0;
+      color: rgba(255,255,255,.38);
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: .42em;
+      text-transform: uppercase;
+      transition: opacity .8s ease, transform .8s ease;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .transmission.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .hint {
+      position: fixed;
+      z-index: 12;
+      left: 34px;
+      bottom: 32px;
+      color: rgba(255,255,255,.23);
+      font-size: 10px;
+      letter-spacing: .30em;
+      text-transform: uppercase;
+    }
+
+    .status {
+      position: fixed;
+      z-index: 12;
+      right: 34px;
+      bottom: 32px;
+      color: rgba(255,255,255,.26);
+      font-size: 10px;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+    }
+
+    .bottom-line {
+      position: fixed;
+      z-index: 12;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
+    }
+
+    .pulse-flash {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at center, rgba(255,255,255,.16), transparent 42%);
+      opacity: 0;
+      z-index: 8;
+      pointer-events: none;
+    }
+
+    .pulse-flash.flash {
+      animation: flash .72s ease-out;
+    }
+
+    @keyframes voidBreath {
+      0%, 100% { filter: brightness(.82) contrast(1.05); }
+      50% { filter: brightness(1.05) contrast(1.18); }
+    }
+
+    @keyframes arrival {
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: .36; transform: scale(.96); }
+      50% { opacity: .68; transform: scale(1.05); }
+    }
+
+    @keyframes ringPulse {
+      0%, 100% { transform: scale(.95) rotate(0deg); opacity: .45; }
+      50% { transform: scale(1.06) rotate(10deg); opacity: .9; }
+    }
+
+    @keyframes flash {
+      0% { opacity: 0; }
+      24% { opacity: .9; }
+      100% { opacity: 0; }
+    }
+
+    @media (max-width: 700px) {
+      .brand, .exit {
+        font-size: 10px;
+        letter-spacing: .28em;
+      }
+
+      .brand { left: 20px; top: 22px; }
+      .exit { right: 20px; top: 22px; }
+
+      .relic-wrap {
+        width: 120vw;
+        transform: scale(1.05);
+      }
+
+      .hint {
+        left: 20px;
+        right: 20px;
+        bottom: 26px;
+        line-height: 1.8;
+      }
+
+      .status { display: none; }
+
+      .transmission {
+        width: 90%;
+        white-space: normal;
+        letter-spacing: .28em;
+      }
+    }
+  </style>
 </head>
 
-<body class="bg-void scanlines">
-  <main class="chamber">
-    <div class="brand-mark">Lotus Labz</div>
-    <a class="back-link" href="signal-void.html">Exit Void</a>
+<body>
+  <main class="stage" id="stage">
+    <div class="brand">Lotus Labz</div>
+    <a class="exit" href="signal-void.html">Exit Void</a>
 
-    <section class="orb-stage" id="orbStage">
-      <div class="orb-wrap" id="orb">
-        <div class="orb-ring"></div>
-        <div class="orb-ring two"></div>
-        <div class="orb-ring three"></div>
-        <div class="signal-core"></div>
-      </div>
+    <section class="relic-wrap" id="relic">
+      <div class="relic-glow"></div>
+      <div class="activation-ring"></div>
+      <div class="activation-ring two"></div>
+
+      <video
+        id="relicVideo"
+        src="assets/ring-interface-void.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="auto"
+      ></video>
     </section>
 
     <div class="transmission" id="transmission"></div>
-
-    <div class="hint">
-      Click anywhere to initialize signal audio // click the signal
-    </div>
-
-    <div class="corner">Signal Void // Active</div>
+    <div class="hint">Move slowly // click to activate audio // click relic to pulse</div>
+    <div class="status">Signal Relic // Online</div>
     <div class="bottom-line"></div>
+    <div class="pulse-flash" id="flash"></div>
+    <div class="vignette"></div>
   </main>
 
   <script>
-    const orbStage = document.getElementById("orbStage");
-    const orb = document.getElementById("orb");
+    const stage = document.getElementById("stage");
+    const relic = document.getElementById("relic");
+    const video = document.getElementById("relicVideo");
     const transmission = document.getElementById("transmission");
+    const flash = document.getElementById("flash");
 
     const messages = [
-      "carrier lock unstable",
-      "memory bleed detected",
+      "relic signal acquired",
+      "carrier bloom detected",
+      "machine memory responding",
+      "void artifact stabilized",
+      "energy lattice awakening",
       "origin signal unknown",
-      "frequency drift increasing",
-      "signal integrity compromised",
-      "echo pattern recognized",
-      "the void is listening",
-      "archive fragment unavailable"
+      "the relic is listening",
+      "signal pressure increasing"
     ];
 
     let lastMessage = -1;
+    let audioReady = false;
+    let audioContext;
+    let masterGain;
+    let pulseGain;
 
     function showTransmission(forceIndex = null) {
       let index = forceIndex ?? Math.floor(Math.random() * messages.length);
-
-      if (index === lastMessage) {
-        index = (index + 1) % messages.length;
-      }
-
+      if (index === lastMessage) index = (index + 1) % messages.length;
       lastMessage = index;
 
       transmission.textContent = messages[index];
       transmission.classList.add("visible");
 
-      setTimeout(() => {
-        transmission.classList.remove("visible");
-      }, 5200);
+      setTimeout(() => transmission.classList.remove("visible"), 5000);
     }
 
-    setTimeout(showTransmission, 1600);
-    setInterval(showTransmission, 9200);
+    setTimeout(showTransmission, 1300);
+    setInterval(showTransmission, 8900);
 
     document.addEventListener("mousemove", (event) => {
-      const x = (event.clientX / window.innerWidth - 0.5) * 34;
-      const y = (event.clientY / window.innerHeight - 0.5) * 34;
+      const x = (event.clientX / window.innerWidth - 0.5);
+      const y = (event.clientY / window.innerHeight - 0.5);
 
-      orbStage.style.transform = `translate(${x}px, ${y}px)`;
+      relic.style.transform = `translate(${x * 28}px, ${y * 22}px) scale(${1 + Math.abs(x) * 0.018})`;
+
+      const rate = 0.82 + Math.abs(x) * 0.22 + Math.abs(y) * 0.14;
+      video.playbackRate = Math.min(1.15, Math.max(0.72, rate));
     });
 
-    orb.addEventListener("click", () => {
-      orb.animate(
-        [
-          { transform: "scale(1)", filter: "brightness(1)" },
-          { transform: "scale(1.08)", filter: "brightness(1.7) contrast(1.4)" },
-          { transform: "scale(1)", filter: "brightness(1)" }
-        ],
-        { duration: 720, easing: "ease-out" }
-      );
+    relic.addEventListener("mouseenter", () => relic.classList.add("active"));
+    relic.addEventListener("mouseleave", () => relic.classList.remove("active"));
+
+    relic.addEventListener("click", () => {
+      relic.classList.add("active");
+      flash.classList.remove("flash");
+      void flash.offsetWidth;
+      flash.classList.add("flash");
+
+      video.playbackRate = 1.35;
+      setTimeout(() => video.playbackRate = 0.92, 900);
 
       showTransmission(6);
 
       if (audioReady) {
         pulseGain.gain.cancelScheduledValues(audioContext.currentTime);
-        pulseGain.gain.setValueAtTime(0.02, audioContext.currentTime);
-        pulseGain.gain.linearRampToValueAtTime(0.12, audioContext.currentTime + 0.12);
+        pulseGain.gain.setValueAtTime(0.002, audioContext.currentTime);
+        pulseGain.gain.linearRampToValueAtTime(0.16, audioContext.currentTime + 0.08);
         pulseGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1.8);
       }
+
+      setTimeout(() => relic.classList.remove("active"), 1200);
     });
-
-    // =========================
-    // SIGNAL VOID AUDIO SYSTEM
-    // =========================
-
-    let audioReady = false;
-    let audioContext;
-    let masterGain;
-    let pulseGain;
 
     function initAudio() {
       if (audioReady) return;
@@ -112,37 +401,34 @@
       audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
       masterGain = audioContext.createGain();
-      masterGain.gain.value = 0.08;
+      masterGain.gain.value = 0.075;
       masterGain.connect(audioContext.destination);
 
-      // low drone
       const drone = audioContext.createOscillator();
       drone.type = "sine";
-      drone.frequency.value = 42;
+      drone.frequency.value = 39;
 
       const droneGain = audioContext.createGain();
-      droneGain.gain.value = 0.035;
+      droneGain.gain.value = 0.036;
 
       drone.connect(droneGain);
       droneGain.connect(masterGain);
       drone.start();
 
-      // high texture
-      const texture = audioContext.createOscillator();
-      texture.type = "triangle";
-      texture.frequency.value = 118;
+      const harmonic = audioContext.createOscillator();
+      harmonic.type = "triangle";
+      harmonic.frequency.value = 117;
 
-      const textureGain = audioContext.createGain();
-      textureGain.gain.value = 0.008;
+      const harmonicGain = audioContext.createGain();
+      harmonicGain.gain.value = 0.008;
 
-      texture.connect(textureGain);
-      textureGain.connect(masterGain);
-      texture.start();
+      harmonic.connect(harmonicGain);
+      harmonicGain.connect(masterGain);
+      harmonic.start();
 
-      // slow modulation
       const lfo = audioContext.createOscillator();
       lfo.type = "sine";
-      lfo.frequency.value = 0.06;
+      lfo.frequency.value = 0.055;
 
       const lfoGain = audioContext.createGain();
       lfoGain.gain.value = 0.018;
@@ -151,13 +437,12 @@
       lfoGain.connect(droneGain.gain);
       lfo.start();
 
-      // filtered noise
       const bufferSize = audioContext.sampleRate * 2;
       const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
       const output = noiseBuffer.getChannelData(0);
 
       for (let i = 0; i < bufferSize; i++) {
-        output[i] = (Math.random() * 2 - 1) * 0.12;
+        output[i] = (Math.random() * 2 - 1) * 0.1;
       }
 
       const whiteNoise = audioContext.createBufferSource();
@@ -166,47 +451,42 @@
 
       const filter = audioContext.createBiquadFilter();
       filter.type = "lowpass";
-      filter.frequency.value = 420;
+      filter.frequency.value = 360;
 
       const noiseGain = audioContext.createGain();
-      noiseGain.gain.value = 0.01;
+      noiseGain.gain.value = 0.012;
 
       whiteNoise.connect(filter);
       filter.connect(noiseGain);
       noiseGain.connect(masterGain);
       whiteNoise.start();
 
-      // pulse interaction gain
       pulseGain = audioContext.createGain();
       pulseGain.gain.value = 0.001;
 
       const pulseOsc = audioContext.createOscillator();
       pulseOsc.type = "sawtooth";
-      pulseOsc.frequency.value = 66;
+      pulseOsc.frequency.value = 63;
 
       pulseOsc.connect(pulseGain);
       pulseGain.connect(masterGain);
       pulseOsc.start();
 
-      // subtle frequency drift
       setInterval(() => {
-        drone.frequency.linearRampToValueAtTime(
-          38 + Math.random() * 10,
-          audioContext.currentTime + 8
-        );
-
-        texture.frequency.linearRampToValueAtTime(
-          110 + Math.random() * 18,
-          audioContext.currentTime + 8
-        );
-      }, 7000);
+        drone.frequency.linearRampToValueAtTime(36 + Math.random() * 8, audioContext.currentTime + 7);
+        harmonic.frequency.linearRampToValueAtTime(108 + Math.random() * 22, audioContext.currentTime + 7);
+        filter.frequency.linearRampToValueAtTime(300 + Math.random() * 220, audioContext.currentTime + 7);
+      }, 6500);
 
       audioReady = true;
-
       showTransmission(4);
     }
 
     document.addEventListener("click", initAudio, { once: true });
+
+    video.addEventListener("loadeddata", () => {
+      video.playbackRate = 0.9;
+    });
   </script>
 </body>
 </html>
