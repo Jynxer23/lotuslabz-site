@@ -16,24 +16,23 @@ html, body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-body { overflow: hidden; }
+body {
+  overflow: hidden;
+}
 
 a { color: inherit; text-decoration: none; }
 
-/* EMERGENCY FIX:
-   This intentionally contains NO image URL.
-   The old Octaveplex/tunnel image cannot load from this CSS. */
 .bg-tunnel::before {
   content: "";
   position: fixed;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(0,0,0,.88), rgba(0,0,0,.52), rgba(0,0,0,.82)),
-    radial-gradient(circle at center, rgba(255,255,255,.05), transparent 30%),
-    url("assets/signal-void-network.jpg") center center / cover no-repeat;
-  transform: scale(1.06);
+    linear-gradient(90deg, rgba(0,0,0,.92), rgba(0,0,0,.58), rgba(0,0,0,.25)),
+    radial-gradient(circle at 62% 48%, rgba(255,255,255,.08), transparent 32%),
+    url("assets/signal-void-bg.jpg") center center / cover no-repeat;
+  transform: scale(1.08);
   animation: slowDrift 38s ease-in-out infinite alternate;
-  filter: contrast(1.05) brightness(.58) saturate(.9);
+  filter: contrast(1.08) brightness(.75) saturate(.95);
 }
 
 .bg-void::before {
@@ -203,8 +202,11 @@ h1 {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
 }
 
-.entering { animation: voidExit 1.2s ease forwards; }
+.entering {
+  animation: voidExit 1.2s ease forwards;
+}
 
+/* Inner chamber */
 .chamber {
   position: relative;
   z-index: 3;
@@ -349,8 +351,8 @@ h1 {
 }
 
 @keyframes slowDrift {
-  from { transform: scale(1.05) translate3d(0, 0, 0); }
-  to { transform: scale(1.12) translate3d(-8px, -6px, 0); }
+  from { transform: scale(1.06) translate3d(0, 0, 0); }
+  to { transform: scale(1.17) translate3d(-10px, -8px, 0); }
 }
 
 @keyframes voidBreathe {
