@@ -16,23 +16,33 @@ html, body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-body {
-  overflow: hidden;
-}
+body { overflow: hidden; }
 
 a { color: inherit; text-decoration: none; }
 
+/* EMERGENCY FIX:
+   This intentionally contains NO image URL.
+   The old Octaveplex/tunnel image cannot load from this CSS. */
 .bg-tunnel::before {
   content: "";
   position: fixed;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(0,0,0,.92), rgba(0,0,0,.58), rgba(0,0,0,.25)),
-    radial-gradient(circle at 62% 48%, rgba(255,255,255,.08), transparent 32%),
-    url("assets/signal-void-bg.jpg") center center / cover no-repeat;
-  transform: scale(1.08);
+    linear-gradient(90deg, rgba(0,0,0,.96), rgba(0,0,0,.72), rgba(0,0,0,.92)),
+    radial-gradient(circle at 50% 42%, rgba(255,255,255,.16), transparent 18%),
+    radial-gradient(circle at 30% 28%, rgba(255,40,70,.16), transparent 30%),
+    radial-gradient(circle at 72% 32%, rgba(80,160,255,.14), transparent 32%),
+    repeating-linear-gradient(
+      115deg,
+      rgba(255,255,255,.035) 0px,
+      rgba(255,255,255,.035) 1px,
+      transparent 2px,
+      transparent 34px
+    ),
+    linear-gradient(180deg, #020305 0%, #000 54%, #030305 100%);
+  transform: scale(1.05);
   animation: slowDrift 38s ease-in-out infinite alternate;
-  filter: contrast(1.08) brightness(.75) saturate(.95);
+  filter: contrast(1.08) brightness(.82) saturate(.95);
 }
 
 .bg-void::before {
@@ -202,11 +212,8 @@ h1 {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
 }
 
-.entering {
-  animation: voidExit 1.2s ease forwards;
-}
+.entering { animation: voidExit 1.2s ease forwards; }
 
-/* Inner chamber */
 .chamber {
   position: relative;
   z-index: 3;
@@ -351,8 +358,8 @@ h1 {
 }
 
 @keyframes slowDrift {
-  from { transform: scale(1.06) translate3d(0, 0, 0); }
-  to { transform: scale(1.17) translate3d(-10px, -8px, 0); }
+  from { transform: scale(1.05) translate3d(0, 0, 0); }
+  to { transform: scale(1.12) translate3d(-8px, -6px, 0); }
 }
 
 @keyframes voidBreathe {
