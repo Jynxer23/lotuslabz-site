@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signal Void Chamber | Lotus Labz</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="bg-void scanlines">
+  <main class="chamber">
+    <div class="brand-mark">Lotus Labz</div>
+    <a class="back-link" href="index.html">Exit Void</a>
+
+    <section class="orb-stage" id="orbStage">
+      <div class="orb-wrap" id="orb">
+        <div class="orb-ring"></div>
+        <div class="orb-ring two"></div>
+        <div class="orb-ring three"></div>
+        <div class="signal-core"></div>
+      </div>
+    </section>
+
+    <div class="transmission" id="transmission"></div>
+    <div class="hint">Move slowly // click the signal</div>
+    <div class="corner">Signal Void // Active</div>
+    <div class="bottom-line"></div>
+  </main>
+
+  <script>
+    const orbStage = document.getElementById("orbStage");
+    const orb = document.getElementById("orb");
+    const transmission = document.getElementById("transmission");
+
+    const messages = [
+      "carrier lock unstable",
+      "memory bleed detected",
+      "origin signal unknown",
+      "frequency drift increasing",
+      "signal integrity compromised",
+      "echo pattern recognized",
+      "the void is listening",
+      "archive fragment unavailable"
+    ];
+
+    let lastMessage = -1;
+
+    function showTransmission(forceIndex = null) {
+      let index = forceIndex ?? Math.floor(Math.random() * messages.length);
+      if (index === lastMessage) index = (index + 1) % messages.length;
+      lastMessage = index;
+
+      transmission.textContent = messages[index];
+      transmission.classList.add("visible");
+
+      setTimeout(() => {
+        transmission.classList.remove("visible");
+      }, 5200);
+    }
+
+    setTimeout(showTransmission, 1600);
+    setInterval(showTransmission, 9200);
+
+    document.addEventListener("mousemove", (event) => {
+      const x = (event.clientX / window.innerWidth - 0.5) * 34;
+      const y = (event.clientY / window.innerHeight - 0.5) * 34;
+      orbStage.style.transform = `translate(${x}px, ${y}px)`;
+    });
+
+    orb.addEventListener("click", () => {
+      orb.animate(
+        [
+          { transform: "scale(1)", filter: "brightness(1)" },
+          { transform: "scale(1.08)", filter: "brightness(1.7) contrast(1.4)" },
+          { transform: "scale(1)", filter: "brightness(1)" }
+        ],
+        { duration: 720, easing: "ease-out" }
+      );
+      showTransmission(6);
+    });
+  </script>
+</body>
+</html>
