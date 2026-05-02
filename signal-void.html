@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signal Void | Lotus Labz</title>
+  <style>
+    :root {
+      --white: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.56);
+      --faint: rgba(255,255,255,0.22);
+      --red: rgba(255, 40, 70, 0.7);
+      --blue: rgba(80, 160, 255, 0.55);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: #000;
+      color: var(--white);
+      font-family: Arial, Helvetica, sans-serif;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(0,0,0,.92), rgba(0,0,0,.58), rgba(0,0,0,.25)),
+        radial-gradient(circle at 62% 48%, rgba(255,255,255,.08), transparent 32%),
+        url("assets/signal-void-bg.jpg") center center / cover no-repeat;
+      transform: scale(1.08);
+      animation: slowDrift 38s ease-in-out infinite alternate;
+      filter: contrast(1.08) brightness(.75) saturate(.95);
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,.035) 0px,
+          rgba(255,255,255,.035) 1px,
+          transparent 2px,
+          transparent 5px
+        );
+      opacity: .42;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, transparent 0%, rgba(0,0,0,.34) 48%, rgba(0,0,0,.94) 100%),
+        linear-gradient(to top, rgba(0,0,0,.88), transparent 38%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .signal-glow {
+      position: fixed;
+      left: 55%;
+      top: 48%;
+      width: 42vw;
+      height: 42vw;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle, rgba(255,255,255,.10), transparent 55%),
+        radial-gradient(circle at 40% 50%, var(--blue), transparent 35%),
+        radial-gradient(circle at 65% 50%, var(--red), transparent 36%);
+      filter: blur(60px);
+      opacity: .23;
+      animation: pulse 7s ease-in-out infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .shell {
+      position: relative;
+      z-index: 3;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: clamp(28px, 7vw, 110px);
+    }
+
+    .content {
+      max-width: 760px;
+      opacity: 0;
+      transform: translateY(18px);
+      animation: reveal 2.2s ease forwards .9s;
+    }
+
+    .status {
+      color: rgba(255,255,255,.42);
+      font-size: 12px;
+      letter-spacing: .48em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(46px, 8vw, 108px);
+      font-weight: 100;
+      line-height: .9;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      text-shadow: 0 0 28px rgba(255,255,255,.13);
+    }
+
+    .line {
+      width: 165px;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(255,255,255,.55), transparent);
+      margin: 34px 0 28px;
+    }
+
+    .subtitle {
+      max-width: 610px;
+      color: var(--muted);
+      font-size: clamp(15px, 1.5vw, 19px);
+      line-height: 1.8;
+      letter-spacing: .04em;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-top: 46px;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid rgba(255,255,255,.22);
+      background: rgba(255,255,255,.045);
+      color: rgba(255,255,255,.86);
+      padding: 17px 26px;
+      min-width: 210px;
+      text-transform: uppercase;
+      letter-spacing: .28em;
+      font-size: 12px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: border-color .35s ease, background .35s ease, transform .35s ease, color .35s ease;
+    }
+
+    .btn:hover {
+      border-color: rgba(255,255,255,.68);
+      background: rgba(255,255,255,.10);
+      transform: translateY(-2px);
+      color: white;
+    }
+
+    .btn.secondary {
+      border-color: rgba(255,255,255,.12);
+      color: rgba(255,255,255,.46);
+      background: rgba(0,0,0,.25);
+    }
+
+    .corner {
+      position: fixed;
+      z-index: 4;
+      right: 28px;
+      bottom: 26px;
+      color: rgba(255,255,255,.32);
+      font-size: 10px;
+      letter-spacing: .36em;
+      text-transform: uppercase;
+    }
+
+    .bottom-line {
+      position: fixed;
+      z-index: 4;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent);
+    }
+
+    .entering {
+      animation: voidExit 1.35s ease forwards;
+    }
+
+    @keyframes slowDrift {
+      from { transform: scale(1.06) translate3d(0, 0, 0); }
+      to { transform: scale(1.17) translate3d(-10px, -8px, 0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: .16; transform: scale(.96); }
+      50% { opacity: .32; transform: scale(1.04); }
+    }
+
+    @keyframes reveal {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes voidExit {
+      0% { filter: none; transform: scale(1); opacity: 1; }
+      45% { filter: contrast(1.5) brightness(1.2) blur(1px); transform: scale(1.015); opacity: 1; }
+      100% { filter: contrast(2) brightness(.25) blur(9px); transform: scale(1.08); opacity: 0; }
+    }
+
+    @media (max-width: 700px) {
+      .shell { align-items: flex-end; padding-bottom: 92px; }
+      .status { letter-spacing: .32em; }
+      h1 { letter-spacing: .11em; }
+      .btn { width: 100%; }
+      .corner { display: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="signal-glow"></div>
+  <div class="vignette"></div>
+
+  <main class="shell" id="shell">
+    <section class="content">
+      <div class="status">Signal Detected</div>
+      <h1>Lotus Labz</h1>
+      <div class="line"></div>
+      <p class="subtitle">
+        A cinematic audiovisual threshold where signal, atmosphere, and machine-born visuals converge.
+      </p>
+
+      <div class="actions">
+        <button class="btn" id="enterBtn">Enter Signal Void</button>
+        <button class="btn secondary" onclick="history.back()">Return to Hub</button>
+      </div>
+    </section>
+  </main>
+
+  <div class="corner">Signal Stability // Nominal</div>
+  <div class="bottom-line"></div>
+
+  <script>
+    const shell = document.getElementById("shell");
+    const enterBtn = document.getElementById("enterBtn");
+
+    document.addEventListener("mousemove", (event) => {
+      const x = (event.clientX / window.innerWidth - 0.5) * 10;
+      const y = (event.clientY / window.innerHeight - 0.5) * 10;
+      shell.style.transform = `translate(${x}px, ${y}px)`;
+    });
+
+    enterBtn.addEventListener("click", () => {
+      document.body.classList.add("entering");
+
+      // Replace this later with the actual deeper installation page.
+      setTimeout(() => {
+        alert("Signal Void installation entry point ready. Next step: build the inner experience.");
+        document.body.classList.remove("entering");
+      }, 1350);
+    });
+  </script>
+</body>
+</html>
