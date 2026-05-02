@@ -28,21 +28,12 @@ a { color: inherit; text-decoration: none; }
   position: fixed;
   inset: 0;
   background:
-    linear-gradient(90deg, rgba(0,0,0,.96), rgba(0,0,0,.72), rgba(0,0,0,.92)),
-    radial-gradient(circle at 50% 42%, rgba(255,255,255,.16), transparent 18%),
-    radial-gradient(circle at 30% 28%, rgba(255,40,70,.16), transparent 30%),
-    radial-gradient(circle at 72% 32%, rgba(80,160,255,.14), transparent 32%),
-    repeating-linear-gradient(
-      115deg,
-      rgba(255,255,255,.035) 0px,
-      rgba(255,255,255,.035) 1px,
-      transparent 2px,
-      transparent 34px
-    ),
-    linear-gradient(180deg, #020305 0%, #000 54%, #030305 100%);
-  transform: scale(1.05);
+    linear-gradient(90deg, rgba(0,0,0,.88), rgba(0,0,0,.52), rgba(0,0,0,.82)),
+    radial-gradient(circle at center, rgba(255,255,255,.05), transparent 30%),
+    url("assets/signal-void-network.jpg") center center / cover no-repeat;
+  transform: scale(1.06);
   animation: slowDrift 38s ease-in-out infinite alternate;
-  filter: contrast(1.08) brightness(.82) saturate(.95);
+  filter: contrast(1.05) brightness(.58) saturate(.9);
 }
 
 .bg-void::before {
