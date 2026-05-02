@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +23,11 @@
     </section>
 
     <div class="transmission" id="transmission"></div>
-    <div class="hint">Move slowly // click the signal</div>
+
+    <div class="hint">
+      Click anywhere to initialize signal audio // click the signal
+    </div>
+
     <div class="corner">Signal Void // Active</div>
     <div class="bottom-line"></div>
   </main>
@@ -47,7 +52,11 @@
 
     function showTransmission(forceIndex = null) {
       let index = forceIndex ?? Math.floor(Math.random() * messages.length);
-      if (index === lastMessage) index = (index + 1) % messages.length;
+
+      if (index === lastMessage) {
+        index = (index + 1) % messages.length;
+      }
+
       lastMessage = index;
 
       transmission.textContent = messages[index];
@@ -64,6 +73,7 @@
     document.addEventListener("mousemove", (event) => {
       const x = (event.clientX / window.innerWidth - 0.5) * 34;
       const y = (event.clientY / window.innerHeight - 0.5) * 34;
+
       orbStage.style.transform = `translate(${x}px, ${y}px)`;
     });
 
@@ -76,8 +86,127 @@
         ],
         { duration: 720, easing: "ease-out" }
       );
+
       showTransmission(6);
+
+      if (audioReady) {
+        pulseGain.gain.cancelScheduledValues(audioContext.currentTime);
+        pulseGain.gain.setValueAtTime(0.02, audioContext.currentTime);
+        pulseGain.gain.linearRampToValueAtTime(0.12, audioContext.currentTime + 0.12);
+        pulseGain.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 1.8);
+      }
     });
+
+    // =========================
+    // SIGNAL VOID AUDIO SYSTEM
+    // =========================
+
+    let audioReady = false;
+    let audioContext;
+    let masterGain;
+    let pulseGain;
+
+    function initAudio() {
+      if (audioReady) return;
+
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+      masterGain = audioContext.createGain();
+      masterGain.gain.value = 0.08;
+      masterGain.connect(audioContext.destination);
+
+      // low drone
+      const drone = audioContext.createOscillator();
+      drone.type = "sine";
+      drone.frequency.value = 42;
+
+      const droneGain = audioContext.createGain();
+      droneGain.gain.value = 0.035;
+
+      drone.connect(droneGain);
+      droneGain.connect(masterGain);
+      drone.start();
+
+      // high texture
+      const texture = audioContext.createOscillator();
+      texture.type = "triangle";
+      texture.frequency.value = 118;
+
+      const textureGain = audioContext.createGain();
+      textureGain.gain.value = 0.008;
+
+      texture.connect(textureGain);
+      textureGain.connect(masterGain);
+      texture.start();
+
+      // slow modulation
+      const lfo = audioContext.createOscillator();
+      lfo.type = "sine";
+      lfo.frequency.value = 0.06;
+
+      const lfoGain = audioContext.createGain();
+      lfoGain.gain.value = 0.018;
+
+      lfo.connect(lfoGain);
+      lfoGain.connect(droneGain.gain);
+      lfo.start();
+
+      // filtered noise
+      const bufferSize = audioContext.sampleRate * 2;
+      const noiseBuffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+
+      for (let i = 0; i < bufferSize; i++) {
+        output[i] = (Math.random() * 2 - 1) * 0.12;
+      }
+
+      const whiteNoise = audioContext.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+
+      const filter = audioContext.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 420;
+
+      const noiseGain = audioContext.createGain();
+      noiseGain.gain.value = 0.01;
+
+      whiteNoise.connect(filter);
+      filter.connect(noiseGain);
+      noiseGain.connect(masterGain);
+      whiteNoise.start();
+
+      // pulse interaction gain
+      pulseGain = audioContext.createGain();
+      pulseGain.gain.value = 0.001;
+
+      const pulseOsc = audioContext.createOscillator();
+      pulseOsc.type = "sawtooth";
+      pulseOsc.frequency.value = 66;
+
+      pulseOsc.connect(pulseGain);
+      pulseGain.connect(masterGain);
+      pulseOsc.start();
+
+      // subtle frequency drift
+      setInterval(() => {
+        drone.frequency.linearRampToValueAtTime(
+          38 + Math.random() * 10,
+          audioContext.currentTime + 8
+        );
+
+        texture.frequency.linearRampToValueAtTime(
+          110 + Math.random() * 18,
+          audioContext.currentTime + 8
+        );
+      }, 7000);
+
+      audioReady = true;
+
+      showTransmission(4);
+    }
+
+    document.addEventListener("click", initAudio, { once: true });
   </script>
 </body>
 </html>
