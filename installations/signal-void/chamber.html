@@ -91,7 +91,7 @@
   </div>
 
   <div class="transmission" id="transmission"></div>
-  <div class="hint" id="hint">Scroll to travel &middot; hold + drag to look around &middot; click the signal</div>
+  <div class="hint" id="hint">Scroll to travel &middot; move the mouse to look around &middot; click the signal</div>
   <div class="corner">Signal Void // Active</div>
   <div class="bottom-line"></div>
 
@@ -302,77 +302,26 @@
         }
       });
 
-      /* ================= hold + drag free look (mouse + touch) ================= */
-      /* Press and hold the scene, then drag, to spin the view in any direction.
-         A short hold-delay + move-threshold lets quick taps/clicks (core interaction)
-         and quick swipes/scrolls (page travel) pass through untouched -- only a
-         deliberate hold-then-drag engages look mode. */
-      const LOOK_SENSITIVITY = 0.0032;
-      const PITCH_LIMIT = 1.25;
-      const HOLD_DELAY = 150;   // ms before a hold engages look mode
-      const MOVE_CANCEL = 8;    // px of movement before the timer that cancels the hold
+      /* ================= free look, anywhere along the path ================= */
+      /* Camera yaw/pitch tracks pointer position continuously -- no click or
+         hold required. Attached to window (not the canvas) so it keeps working
+         regardless of what UI is stacked on top at a given scroll position. */
+      const YAW_RANGE = Math.PI * 1.5;   // ~270 degrees of total left/right swing
+      const PITCH_RANGE = 0.95;          // ~54 degrees up/down, clamped so you can't flip over
 
       let yaw = 0, pitch = 0, yawTarget = 0, pitchTarget = 0;
-      let isHolding = false, isLooking = false, holdTimer = null;
-      let startX = 0, startY = 0, lastX = 0, lastY = 0;
 
-      function beginHold(x, y){
-        isHolding = true;
-        isLooking = false;
-        startX = lastX = x;
-        startY = lastY = y;
-        clearTimeout(holdTimer);
-        holdTimer = setTimeout(() => {
-          if (isHolding){
-            isLooking = true;
-            canvas.style.cursor = "grabbing";
-          }
-        }, HOLD_DELAY);
+      function updateLookTarget(x, y){
+        const nx = x / window.innerWidth - 0.5;   // -0.5 .. 0.5
+        const ny = y / window.innerHeight - 0.5;  // -0.5 .. 0.5
+        yawTarget = -nx * YAW_RANGE;
+        pitchTarget = THREE.MathUtils.clamp(-ny * PITCH_RANGE, -PITCH_RANGE, PITCH_RANGE);
       }
 
-      function moveHold(x, y){
-        if (!isHolding) return null;
-        if (!isLooking){
-          const moved = Math.hypot(x - startX, y - startY);
-          if (moved > MOVE_CANCEL){
-            clearTimeout(holdTimer);
-            isHolding = false;
-          }
-          lastX = x; lastY = y;
-          return false;
-        }
-        const dx = x - lastX, dy = y - lastY;
-        lastX = x; lastY = y;
-        yawTarget -= dx * LOOK_SENSITIVITY;
-        pitchTarget = THREE.MathUtils.clamp(pitchTarget - dy * LOOK_SENSITIVITY, -PITCH_LIMIT, PITCH_LIMIT);
-        return true;
-      }
-
-      function endHold(){
-        clearTimeout(holdTimer);
-        if (isLooking) canvas.style.cursor = "grab";
-        isHolding = false;
-        isLooking = false;
-      }
-
-      canvas.style.cursor = "grab";
-      canvas.style.userSelect = "none";
-      canvas.style.webkitUserSelect = "none";
-      canvas.addEventListener("contextmenu", (e) => e.preventDefault());
-
-      canvas.addEventListener("pointerdown", (e) => {
-        beginHold(e.clientX, e.clientY);
-        try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
-      });
-      canvas.addEventListener("pointermove", (e) => {
-        const looked = moveHold(e.clientX, e.clientY);
-        if (looked) e.preventDefault();
-      }, { passive: false });
-      canvas.addEventListener("pointerup", endHold);
-      canvas.addEventListener("pointercancel", endHold);
-      canvas.addEventListener("pointerleave", (e) => {
-        if (e.pointerType === "mouse") endHold();
-      });
+      window.addEventListener("pointermove", (e) => updateLookTarget(e.clientX, e.clientY), { passive: true });
+      window.addEventListener("touchmove", (e) => {
+        if (e.touches && e.touches.length) updateLookTarget(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
 
       /* ================= resize ================= */
       function onResize(){

@@ -95,7 +95,7 @@ body.scanlines:after{
   background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);
 }
 
-.journey{position:relative;z-index:3;height:600vh}
+.journey{position:relative;z-index:3;height:600vh;pointer-events:none}
 
 .signal-stage{
   position:fixed;inset:0;z-index:4;
