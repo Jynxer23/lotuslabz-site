@@ -262,17 +262,27 @@
             return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
           }
 
-          /* HSV hue-sweep instead of RGB-interpolated anchor colors -- linear
-             RGB mixing between a cyan-ish teal and an amber previously passed
-             through a muddy olive/yellow-green band, which read as "mostly
-             green and yellow." Sweeping hue the other way around the wheel
-             (blue -> indigo -> violet -> magenta -> rose -> red -> orange)
-             stays vivid and never touches green/yellow, closer to real
-             Hubble-style nebula coloring. */
+          /* HSV hue-sweep instead of RGB-interpolated anchor colors -- stays
+             vivid and never crosses the green/yellow band (goes blue ->
+             indigo -> violet -> magenta -> rose -> red -> orange instead). */
           vec3 hsv2rgb(vec3 c){
             vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
             vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
             return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+          }
+
+          /* 3-octave fractal Brownian motion for turbulent, filamentary
+             detail -- a single noise layer reads as a smooth blob; stacking
+             a few frequencies is what gives real nebula images their
+             wispy, torn-cloud structure. */
+          float fbm(vec3 p){
+            float sum = 0.0, amp = 0.5, freq = 1.0;
+            for (int i = 0; i < 3; i++){
+              sum += amp * snoise(p * freq);
+              freq *= 2.03;
+              amp *= 0.5;
+            }
+            return sum;
           }
 
           void main(){
@@ -280,31 +290,43 @@
                (scaled down) so flying through the tunnel gradually reveals
                new nebula structure -- explorable, not a fixed backdrop that
                only reacts to look direction. */
-            vec3 p = normalize(vPos) * 1.5 + uCamPos * 0.03;
-            float flowTime = uTime * 0.03;
+            vec3 dir = normalize(vPos);
+            vec3 p = dir * 1.5 + uCamPos * 0.03;
+            float flowTime = uTime * 0.025;
 
             vec3 warp = vec3(
-              snoise(p + vec3(0.0, 0.0, flowTime)),
-              snoise(p + vec3(4.1, 2.3, flowTime)),
-              snoise(p + vec3(1.2, 7.4, flowTime))
+              fbm(p + vec3(0.0, 0.0, flowTime)),
+              fbm(p + vec3(4.1, 2.3, flowTime)),
+              fbm(p + vec3(1.2, 7.4, flowTime))
             );
-            vec3 warped = p + warp * 0.4;
+            vec3 warped = p + warp * 0.55;
 
-            float n  = snoise(warped * 0.8 + vec3(0.0, 0.0, flowTime * 0.6));
-            float n2 = snoise(warped * 1.7 - vec3(0.0, 0.0, flowTime * 0.45));
-            float n3 = snoise(warped * 0.5 + vec3(9.0, 3.0, flowTime * 0.3));
+            float structure = fbm(warped * 1.1 + vec3(0.0, 0.0, flowTime * 0.5));
+            float fine = fbm(warped * 2.5 - vec3(0.0, 0.0, flowTime * 0.8));
+            float mask = snoise(p * 0.32 + vec3(0.0, 0.0, flowTime * 0.15));
 
-            float t = n * 0.5 + 0.5;
-            float hueShift = n3 * 0.5 + 0.5;
-            float hue = fract(mix(0.56, 1.08, t) + hueShift * 0.06);
-            float sat = 0.5 + 0.22 * (n2 * 0.5 + 0.5);
-            float density = smoothstep(-0.25, 0.85, n2);
-            float val = 0.10 + density * 0.55;
+            /* Large-scale mask gates WHERE nebula gas exists at all, so most
+               of the sphere stays near-empty deep-space black and the gas
+               shows up as discrete structured regions, not a wash of color
+               everywhere. */
+            float presence = smoothstep(0.05, 0.6, mask);
+            float density = smoothstep(-0.05, 0.65, structure) * presence;
+            density = pow(density, 1.5);
+
+            float hueBase = fract(mix(0.58, 1.0, structure * 0.5 + 0.5));
+            float hue = mix(hueBase, fract(hueBase + 0.09), density);
+            float sat = 0.55 + 0.2 * density;
+            float val = density * 0.9;
+
+            /* Bright compact knots -- the star-forming clumps that punctuate
+               real nebula imagery. */
+            float knot = smoothstep(0.68, 0.94, fine) * presence;
+            val += knot * 0.5;
 
             vec3 col = hsv2rgb(vec3(hue, sat, val));
 
-            float fade = smoothstep(1.0, 0.3, abs(normalize(vPos).y));
-            col *= mix(0.55, 1.0, fade);
+            float fade = smoothstep(1.0, 0.3, abs(dir.y));
+            col *= mix(0.6, 1.0, fade);
 
             col = max(col, vec3(0.012, 0.016, 0.026));
 
@@ -314,6 +336,40 @@
       });
       const bgSphere = new THREE.Mesh(bgGeo, bgMat);
       scene.add(bgSphere);
+
+      /* ================= dynamic reflection probe ================= */
+      /* Captures the live scene (nebula shader, particles, shapes) into a
+         cubemap so the metallic shapes actually mirror what's around them.
+         256px, updated every 2nd frame -- crisper than the first pass, still
+         throttled to keep the cost reasonable. Declared before the shapes
+         below so their materials can reference the texture directly. */
+      const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256, {
+        generateMipmaps: true,
+        minFilter: THREE.LinearMipmapLinearFilter
+      });
+      const cubeCamera = new THREE.CubeCamera(0.1, 200, cubeRenderTarget);
+      scene.add(cubeCamera);
+      scene.environment = cubeRenderTarget.texture;
+
+      /* ================= lights ================= */
+      /* Pure environment reflection off a mostly-dark nebula reads as flat --
+         real point lights are what give metal its sharp, moving specular
+         glints. A dim ambient keeps non-metal edges from going fully black;
+         a light attached near the camera guarantees a highlight on whatever
+         shape you're closest to; two fixed accent lights color the core and
+         the far end of the tunnel. */
+      scene.add(new THREE.AmbientLight(0x30354a, 0.6));
+
+      const travelLight = new THREE.PointLight(0xfff2e0, 6, 40, 2);
+      scene.add(travelLight);
+
+      const coreLight = new THREE.PointLight(0xff5a70, 5, 60, 2);
+      coreLight.position.set(0, 4, -46);
+      scene.add(coreLight);
+
+      const farLight = new THREE.PointLight(0x6fa8ff, 4, 70, 2);
+      farLight.position.set(-4, -3, -96);
+      scene.add(farLight);
 
 
       /* particle field */
@@ -363,25 +419,30 @@
       const particles = new THREE.Points(particleGeo, particleMat);
       scene.add(particles);
 
-      /* abstract floating geometry, scattered along the journey -- solid metal
-         core (reflects the environment via the dynamic cube probe below) with
-         a glowing edge-line overlay so it still reads as circuitry, not just
-         a shiny blob. Each shape gets its own metal/gem tone. */
+      /* abstract floating geometry, scattered along the journey -- near-mirror
+         metal core (reflects the environment via the dynamic cube probe
+         below, PLUS real point lights for sharp specular glints -- pure
+         environment reflection off a mostly-dark nebula reads as flat, so
+         actual lights are what sell "shiny metal") with a glowing edge-line
+         overlay so it still reads as circuitry, not just a polished blob. */
       const shapeDefs = [
-        { geo: new THREE.IcosahedronGeometry(2.4, 0), color: 0xff6a3c, rough: 0.3,  z: -16, x: -6, y: 2 },  // copper
-        { geo: new THREE.TorusGeometry(2.1, 0.5, 16, 48), color: 0x9fc4ff, rough: 0.18, z: -34, x: 7, y: -3 },  // chrome / steel-blue
-        { geo: new THREE.OctahedronGeometry(2.6, 0), color: 0xb060ff, rough: 0.32, z: -58, x: -7, y: -2 },  // amethyst
-        { geo: new THREE.IcosahedronGeometry(1.6, 1), color: 0xd7dbe4, rough: 0.12, z: -78, x: 6, y: 3 },   // gunmetal / silver
-        { geo: new THREE.TorusKnotGeometry(1.5, 0.35, 128, 16), color: 0xffce6b, rough: 0.24, z: -96, x: 0, y: -4 } // gold
+        { geo: new THREE.IcosahedronGeometry(2.4, 0), color: 0xff6a3c, rough: 0.16, z: -16, x: -6, y: 2 },  // copper
+        { geo: new THREE.TorusGeometry(2.1, 0.5, 24, 64), color: 0x9fc4ff, rough: 0.06, z: -34, x: 7, y: -3 },  // chrome / steel-blue
+        { geo: new THREE.OctahedronGeometry(2.6, 0), color: 0xb060ff, rough: 0.18, z: -58, x: -7, y: -2 },  // amethyst
+        { geo: new THREE.IcosahedronGeometry(1.6, 1), color: 0xd7dbe4, rough: 0.05, z: -78, x: 6, y: 3 },   // gunmetal / silver, near-mirror
+        { geo: new THREE.TorusKnotGeometry(1.5, 0.35, 160, 20), color: 0xffce6b, rough: 0.12, z: -96, x: 0, y: -4 } // gold
       ];
       const shapes = shapeDefs.map(def => {
         const mat = new THREE.MeshPhysicalMaterial({
           color: def.color,
           metalness: 1.0,
           roughness: def.rough,
-          envMapIntensity: 1.5,
-          clearcoat: 0.4,
-          clearcoatRoughness: 0.2
+          envMap: cubeRenderTarget.texture,
+          envMapIntensity: 2.2,
+          clearcoat: 0.6,
+          clearcoatRoughness: 0.1,
+          emissive: def.color,
+          emissiveIntensity: 0.04
         });
         const mesh = new THREE.Mesh(def.geo, mat);
         mesh.position.set(def.x, def.y, def.z);
@@ -432,19 +493,6 @@
       coreGroup.add(ringB);
 
       scene.add(coreGroup);
-
-      /* ================= dynamic reflection probe ================= */
-      /* Captures the live scene (background shader, particles, other shapes)
-         into a small cubemap so the metallic shapes actually mirror what's
-         around them, instead of a fixed fake environment. Throttled to every
-         3rd frame and rendered at low resolution to keep the cost down. */
-      const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(128, {
-        generateMipmaps: true,
-        minFilter: THREE.LinearMipmapLinearFilter
-      });
-      const cubeCamera = new THREE.CubeCamera(0.1, 200, cubeRenderTarget);
-      scene.add(cubeCamera);
-      scene.environment = cubeRenderTarget.texture;
 
       /* ================= interaction ================= */
       const raycaster = new THREE.Raycaster();
@@ -572,7 +620,10 @@
 
         bgMat.uniforms.uTime.value = t;
         bgMat.uniforms.uCamPos.value.copy(camera.position);
-        if (frameCount % 3 === 0){
+
+        travelLight.position.set(camera.position.x, camera.position.y, camera.position.z - 6);
+
+        if (frameCount % 2 === 0){
           cubeCamera.position.set(0, 0, camera.position.z - 15);
           cubeCamera.update(renderer, scene);
         }
