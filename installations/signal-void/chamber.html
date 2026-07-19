@@ -91,7 +91,7 @@
   </div>
 
   <div class="transmission" id="transmission"></div>
-  <div class="hint" id="hint">Scroll to travel deeper // click the signal</div>
+  <div class="hint" id="hint">Scroll to travel &middot; hold + drag to look around &middot; click the signal</div>
   <div class="corner">Signal Void // Active</div>
   <div class="bottom-line"></div>
 
@@ -302,11 +302,76 @@
         }
       });
 
-      /* mouse parallax */
-      let mouseX = 0, mouseY = 0, mouseXTarget = 0, mouseYTarget = 0;
-      window.addEventListener("mousemove", (e) => {
-        mouseXTarget = (e.clientX / window.innerWidth - 0.5) * 2;
-        mouseYTarget = (e.clientY / window.innerHeight - 0.5) * 2;
+      /* ================= hold + drag free look (mouse + touch) ================= */
+      /* Press and hold the scene, then drag, to spin the view in any direction.
+         A short hold-delay + move-threshold lets quick taps/clicks (core interaction)
+         and quick swipes/scrolls (page travel) pass through untouched -- only a
+         deliberate hold-then-drag engages look mode. */
+      const LOOK_SENSITIVITY = 0.0032;
+      const PITCH_LIMIT = 1.25;
+      const HOLD_DELAY = 150;   // ms before a hold engages look mode
+      const MOVE_CANCEL = 8;    // px of movement before the timer that cancels the hold
+
+      let yaw = 0, pitch = 0, yawTarget = 0, pitchTarget = 0;
+      let isHolding = false, isLooking = false, holdTimer = null;
+      let startX = 0, startY = 0, lastX = 0, lastY = 0;
+
+      function beginHold(x, y){
+        isHolding = true;
+        isLooking = false;
+        startX = lastX = x;
+        startY = lastY = y;
+        clearTimeout(holdTimer);
+        holdTimer = setTimeout(() => {
+          if (isHolding){
+            isLooking = true;
+            canvas.style.cursor = "grabbing";
+          }
+        }, HOLD_DELAY);
+      }
+
+      function moveHold(x, y){
+        if (!isHolding) return null;
+        if (!isLooking){
+          const moved = Math.hypot(x - startX, y - startY);
+          if (moved > MOVE_CANCEL){
+            clearTimeout(holdTimer);
+            isHolding = false;
+          }
+          lastX = x; lastY = y;
+          return false;
+        }
+        const dx = x - lastX, dy = y - lastY;
+        lastX = x; lastY = y;
+        yawTarget -= dx * LOOK_SENSITIVITY;
+        pitchTarget = THREE.MathUtils.clamp(pitchTarget - dy * LOOK_SENSITIVITY, -PITCH_LIMIT, PITCH_LIMIT);
+        return true;
+      }
+
+      function endHold(){
+        clearTimeout(holdTimer);
+        if (isLooking) canvas.style.cursor = "grab";
+        isHolding = false;
+        isLooking = false;
+      }
+
+      canvas.style.cursor = "grab";
+      canvas.style.userSelect = "none";
+      canvas.style.webkitUserSelect = "none";
+      canvas.addEventListener("contextmenu", (e) => e.preventDefault());
+
+      canvas.addEventListener("pointerdown", (e) => {
+        beginHold(e.clientX, e.clientY);
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) {}
+      });
+      canvas.addEventListener("pointermove", (e) => {
+        const looked = moveHold(e.clientX, e.clientY);
+        if (looked) e.preventDefault();
+      }, { passive: false });
+      canvas.addEventListener("pointerup", endHold);
+      canvas.addEventListener("pointercancel", endHold);
+      canvas.addEventListener("pointerleave", (e) => {
+        if (e.pointerType === "mouse") endHold();
       });
 
       /* ================= resize ================= */
@@ -331,14 +396,12 @@
         progress += (progressTarget - progress) * 0.06;
         updateStages(progress);
 
-        mouseX += (mouseXTarget - mouseX) * 0.04;
-        mouseY += (mouseYTarget - mouseY) * 0.04;
+        yaw += (yawTarget - yaw) * 0.12;
+        pitch += (pitchTarget - pitch) * 0.12;
 
         const targetZ = THREE.MathUtils.lerp(Z_START, Z_END, progress);
         camera.position.z += (targetZ - camera.position.z) * 0.08;
-        camera.position.x += (mouseX * 1.6 - camera.position.x) * 0.05;
-        camera.position.y += (-mouseY * 1.0 - camera.position.y) * 0.05;
-        camera.lookAt(mouseX * 0.6, -mouseY * 0.4, camera.position.z - 12);
+        camera.quaternion.setFromEuler(new THREE.Euler(pitch, yaw, 0, "YXZ"));
 
         const t = clock.elapsedTime;
 
