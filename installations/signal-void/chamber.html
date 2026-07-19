@@ -456,120 +456,127 @@
         return { mesh, spin: (Math.random() - 0.5) * 0.006 + (Math.random() < 0.5 ? -0.002 : 0.002) };
       });
 
-      /* ================= copper icosahedron hero effects (Field 01) ================= */
-      /* This shape gets its own custom material: a molten, glowing crack
-         pattern layered over a genuine cubemap metal reflection (same probe
-         everything else uses), plus an opacity uniform driven by JS for the
-         holographic flicker below. */
-      const copperGeo = new THREE.IcosahedronGeometry(2.4, 0);
-      const copperColor = 0xff6a3c;
-      const copperPos = new THREE.Vector3(-6, 2, -16);
-      const copperMat = new THREE.ShaderMaterial({
-        transparent: true,
-        uniforms: {
-          uTime: { value: 0 },
-          uOpacity: { value: 1 },
-          uFlash: { value: 0 },
-          uEnvMap: { value: cubeRenderTarget.texture },
-          uColor: { value: new THREE.Color(copperColor) }
-        },
-        vertexShader: `
-          varying vec3 vNormalW;
-          varying vec3 vPosW;
-          varying vec3 vPosL;
-          void main(){
-            vNormalW = normalize(mat3(modelMatrix) * normal);
-            vPosW = (modelMatrix * vec4(position, 1.0)).xyz;
-            vPosL = position;
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }
-        `,
-        fragmentShader: `
-          uniform float uTime;
-          uniform float uOpacity;
-          uniform float uFlash;
-          uniform samplerCube uEnvMap;
-          uniform vec3 uColor;
-          varying vec3 vNormalW;
-          varying vec3 vPosW;
-          varying vec3 vPosL;
+      /* ================= sacred-geometry set piece (Field 01) ================= */
+      /* A scene of its own: an iridescent mirror core (real thin-film
+         iridescence via MeshPhysicalMaterial, not a hand-rolled shader --
+         more reliable and it's exactly the "oil slick / opal" look), three
+         nested sacred-geometry cages rotating at different speeds/axes, a
+         Flower-of-Life halo ring, a cluster of independently-pulsing light
+         nodes at the cage vertices, and a dense local nebula microclimate
+         distinct in color and density from the ambient starfield. */
+      const relicPos = new THREE.Vector3(-6, 2, -16);
+      const relicGroup = new THREE.Group();
+      relicGroup.position.copy(relicPos);
+      scene.add(relicGroup);
 
-          vec3 mod289(vec3 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
-          vec4 mod289(vec4 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
-          vec4 permute(vec4 x){ return mod289(((x * 34.0) + 1.0) * x); }
-          vec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314 * r; }
-          float snoise(vec3 v){
-            const vec2 C = vec2(1.0 / 6.0, 1.0 / 3.0);
-            const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
-            vec3 i  = floor(v + dot(v, C.yyy));
-            vec3 x0 = v - i + dot(i, C.xxx);
-            vec3 g = step(x0.yzx, x0.xyz);
-            vec3 l = 1.0 - g;
-            vec3 i1 = min(g.xyz, l.zxy);
-            vec3 i2 = max(g.xyz, l.zxy);
-            vec3 x1 = x0 - i1 + C.xxx;
-            vec3 x2 = x0 - i2 + C.yyy;
-            vec3 x3 = x0 - D.yyy;
-            i = mod289(i);
-            vec4 p = permute(permute(permute(
-                      i.z + vec4(0.0, i1.z, i2.z, 1.0))
-                    + i.y + vec4(0.0, i1.y, i2.y, 1.0))
-                    + i.x + vec4(0.0, i1.x, i2.x, 1.0));
-            float n_ = 0.142857142857;
-            vec3 ns = n_ * D.wyz - D.xzx;
-            vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
-            vec4 x_ = floor(j * ns.z);
-            vec4 y_ = floor(j - 7.0 * x_);
-            vec4 x = x_ * ns.x + ns.yyyy;
-            vec4 y = y_ * ns.x + ns.yyyy;
-            vec4 h = 1.0 - abs(x) - abs(y);
-            vec4 b0 = vec4(x.xy, y.xy);
-            vec4 b1 = vec4(x.zw, y.zw);
-            vec4 s0 = floor(b0) * 2.0 + 1.0;
-            vec4 s1 = floor(b1) * 2.0 + 1.0;
-            vec4 sh = -step(h, vec4(0.0));
-            vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
-            vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
-            vec3 p0 = vec3(a0.xy, h.x);
-            vec3 p1 = vec3(a0.zw, h.y);
-            vec3 p2 = vec3(a1.xy, h.z);
-            vec3 p3 = vec3(a1.zw, h.w);
-            vec4 norm = taylorInvSqrt(vec4(dot(p0, p0), dot(p1, p1), dot(p2, p2), dot(p3, p3)));
-            p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
-            vec4 m = max(0.6 - vec4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0);
-            m = m * m;
-            return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
-          }
-
-          void main(){
-            vec3 viewDir = normalize(vPosW - cameraPosition);
-            vec3 reflectDir = reflect(viewDir, normalize(vNormalW));
-            vec3 envColor = textureCube(uEnvMap, reflectDir).rgb;
-
-            /* dark oxidized-copper base, tinted by its own reflection */
-            vec3 base = mix(uColor * 0.12, envColor * uColor * 1.4, 0.6);
-
-            /* animated crack network: thin bright veins from thresholded noise */
-            float n = snoise(vPosL * 1.4 + vec3(0.0, 0.0, uTime * 0.15));
-            float n2 = snoise(vPosL * 3.1 - vec3(0.0, 0.0, uTime * 0.22));
-            float veins = abs(fract(n * 3.2 + n2 * 1.6) - 0.5);
-            float crack = smoothstep(0.05, 0.0, veins);
-            float pulse = 0.6 + 0.4 * sin(uTime * 1.6 + n2 * 4.0);
-            vec3 glow = vec3(1.0, 0.55, 0.25) * crack * pulse * 1.6;
-
-            vec3 col = base + glow;
-            col += vec3(1.0, 0.6, 0.32) * uFlash;
-            gl_FragColor = vec4(col, uOpacity);
-          }
-        `
+      const relicCoreGeo = new THREE.IcosahedronGeometry(2.1, 1);
+      const relicCoreMat = new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        metalness: 1.0,
+        roughness: 0.04,
+        envMap: cubeRenderTarget.texture,
+        envMapIntensity: 2.6,
+        iridescence: 1.0,
+        iridescenceIOR: 1.3,
+        iridescenceThicknessRange: [100, 420],
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.03
       });
-      const copperMesh = new THREE.Mesh(copperGeo, copperMat);
-      copperMesh.position.copy(copperPos);
-      const copperEdgeMat = new THREE.LineBasicMaterial({ color: copperColor, transparent: true, opacity: 0.7 });
-      const copperEdges = new THREE.LineSegments(new THREE.EdgesGeometry(copperGeo), copperEdgeMat);
-      copperMesh.add(copperEdges);
-      scene.add(copperMesh);
-      shapes.unshift({ mesh: copperMesh, spin: 0.0032 });
+      const relicCore = new THREE.Mesh(relicCoreGeo, relicCoreMat);
+      relicGroup.add(relicCore);
+
+      const cageDefs = [
+        { geo: new THREE.DodecahedronGeometry(3.6, 0), color: 0x9fe8ff, spinY: 0.0022,  spinX: 0.0009 },
+        { geo: new THREE.IcosahedronGeometry(3.0, 0),  color: 0xffb0e0, spinY: -0.0031, spinX: 0.0014 },
+        { geo: new THREE.OctahedronGeometry(2.5, 0),   color: 0xffe08a, spinY: 0.0045,  spinX: -0.002 }
+      ];
+      const cages = cageDefs.map(def => {
+        const mesh = new THREE.LineSegments(
+          new THREE.EdgesGeometry(def.geo),
+          new THREE.LineBasicMaterial({ color: def.color, transparent: true, opacity: 0.55 })
+        );
+        relicGroup.add(mesh);
+        return { mesh, spinX: def.spinX, spinY: def.spinY };
+      });
+
+      const flowerGroup = new THREE.Group();
+      const flowerRadius = 1.15, flowerCount = 6;
+      const flowerRingGeo = new THREE.TorusGeometry(flowerRadius, 0.02, 8, 48);
+      const flowerMat = new THREE.MeshBasicMaterial({
+        color: 0xcfeaff, transparent: true, opacity: 0.5,
+        blending: THREE.AdditiveBlending, side: THREE.DoubleSide
+      });
+      flowerGroup.add(new THREE.Mesh(flowerRingGeo, flowerMat));
+      for (let i = 0; i < flowerCount; i++){
+        const angle = (i / flowerCount) * Math.PI * 2;
+        const ring = new THREE.Mesh(flowerRingGeo, flowerMat);
+        ring.position.set(Math.cos(angle) * flowerRadius, Math.sin(angle) * flowerRadius, 0);
+        flowerGroup.add(ring);
+      }
+      flowerGroup.scale.setScalar(3.4);
+      relicGroup.add(flowerGroup);
+
+      /* pulsing light nodes at the dodecahedron's 20 unique vertices --
+         PolyhedronGeometry is non-indexed (duplicated verts per triangle),
+         so de-dupe by rounded position first. */
+      const nodePositions = cageDefs[0].geo.attributes.position;
+      const seenNodeKeys = new Set();
+      const pulseNodes = [];
+      for (let i = 0; i < nodePositions.count; i++){
+        const vx = nodePositions.getX(i), vy = nodePositions.getY(i), vz = nodePositions.getZ(i);
+        const key = vx.toFixed(2) + "," + vy.toFixed(2) + "," + vz.toFixed(2);
+        if (seenNodeKeys.has(key)) continue;
+        seenNodeKeys.add(key);
+        const nodeMat = new THREE.SpriteMaterial({
+          map: glowTex, color: 0xffffff, transparent: true,
+          blending: THREE.AdditiveBlending, depthWrite: false, opacity: 0.8
+        });
+        const node = new THREE.Sprite(nodeMat);
+        node.position.set(vx, vy, vz);
+        relicGroup.add(node);
+        pulseNodes.push({
+          sprite: node,
+          period: 1.4 + Math.random() * 2.6,
+          phase: Math.random() * Math.PI * 2,
+          baseScale: 0.35 + Math.random() * 0.35
+        });
+      }
+
+      /* localized nebula microclimate -- denser and more saturated than the
+         ambient starfield, confined to a tight bubble around the relic. */
+      const MICRO_COUNT = 260;
+      const microPositions = new Float32Array(MICRO_COUNT * 3);
+      const microSeeds = new Float32Array(MICRO_COUNT * 3);
+      const microColors = new Float32Array(MICRO_COUNT * 3);
+      const microPalette = [
+        new THREE.Color(0x7fe8ff), new THREE.Color(0xffb0e8),
+        new THREE.Color(0xffe08a), new THREE.Color(0xffffff)
+      ];
+      for (let i = 0; i < MICRO_COUNT; i++){
+        const i3 = i * 3;
+        const r = 3.2 + Math.random() * 5.5;
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.acos(Math.random() * 2 - 1);
+        microPositions[i3]     = r * Math.sin(phi) * Math.cos(theta);
+        microPositions[i3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+        microPositions[i3 + 2] = r * Math.cos(phi);
+        microSeeds[i3]     = Math.random() * Math.PI * 2;
+        microSeeds[i3 + 1] = 0.3 + Math.random() * 0.9;
+        microSeeds[i3 + 2] = 0.4 + Math.random() * 0.7;
+        const c = microPalette[Math.floor(Math.random() * microPalette.length)];
+        microColors[i3] = c.r; microColors[i3 + 1] = c.g; microColors[i3 + 2] = c.b;
+      }
+      const microGeo = new THREE.BufferGeometry();
+      microGeo.setAttribute("position", new THREE.BufferAttribute(microPositions, 3));
+      microGeo.setAttribute("color", new THREE.BufferAttribute(microColors, 3));
+      const microMat = new THREE.PointsMaterial({
+        size: 0.5, map: glowTex, transparent: true, depthWrite: false,
+        vertexColors: true, blending: THREE.AdditiveBlending, opacity: 0.85
+      });
+      const microParticles = new THREE.Points(microGeo, microMat);
+      relicGroup.add(microParticles);
+
+      shapes.push({ mesh: relicCore, spin: 0.0015 });
 
       /* signal core, sits along the "Field 03" section of the journey */
       const coreGroup = new THREE.Group();
@@ -828,16 +835,6 @@
       /* camera travels from z=24 down to roughly z=-108 across the journey */
       const Z_START = 24, Z_END = -108;
 
-      /* copper icosahedron hero-effect state: ambient gravity well always on,
-         a one-shot shockwave ring that fires once as the camera approaches
-         and resets once you've moved far enough away (so scrolling back up
-         and down again re-triggers it), and an irregular holographic flicker
-         on its own random timer so it never lines up with the shockwave. */
-      const ATTRACT_RADIUS = 15, ATTRACT_RADIUS_SQ = ATTRACT_RADIUS * ATTRACT_RADIUS;
-      let shockwaveTriggered = false, shockwaveTime = -999, shockwaveArmed = true;
-      let flickerNextAt = 4 + Math.random() * 5;
-      let flickerUntil = -1;
-
       const clock = new THREE.Clock();
       let frameCount = 0;
       function animate(){
@@ -857,19 +854,6 @@
 
         const t = clock.elapsedTime;
 
-        /* copper shockwave trigger: fires once as camera gets close, rearms
-           once you back off far enough to leave room for it to fire again. */
-        const distToCopper = camera.position.distanceTo(copperPos);
-        if (distToCopper < 17 && shockwaveArmed){
-          shockwaveTriggered = true;
-          shockwaveTime = t;
-          shockwaveArmed = false;
-        }
-        if (distToCopper > 24) shockwaveArmed = true;
-        const sinceShock = t - shockwaveTime;
-        const shockActive = shockwaveTriggered && sinceShock < 2.4;
-        const shockRadius = sinceShock * 9.0;
-
         if (!reduceMotion){
           const posAttr = particleGeo.attributes.position;
           for (let i = 0; i < PARTICLE_COUNT; i++){
@@ -877,56 +861,30 @@
             const phase = seeds[i3], speed = seeds[i3 + 1], amp = seeds[i3 + 2];
             posAttr.array[i3]     += Math.sin(t * 0.15 * speed + phase) * 0.0015 * amp;
             posAttr.array[i3 + 1] += Math.cos(t * 0.12 * speed + phase) * 0.0015 * amp;
-
-            /* gravity well + shockwave: only bother for particles anywhere
-               near the copper shape, cheap early-out for the rest. */
-            const dx = copperPos.x - posAttr.array[i3];
-            const dy = copperPos.y - posAttr.array[i3 + 1];
-            const dz = copperPos.z - posAttr.array[i3 + 2];
-            const distSq = dx * dx + dy * dy + dz * dz;
-            if (distSq < ATTRACT_RADIUS_SQ){
-              const dist = Math.sqrt(distSq) + 0.0001;
-              const nx = dx / dist, ny = dy / dist, nz = dz / dist;
-
-              /* gentle ambient pull-and-swirl, softened so it never collapses */
-              const pull = 0.05 / (distSq + 5.0);
-              posAttr.array[i3]     += nx * pull - ny * pull * 0.7;
-              posAttr.array[i3 + 1] += ny * pull + nx * pull * 0.7;
-              posAttr.array[i3 + 2] += nz * pull;
-
-              if (shockActive){
-                const ringDist = Math.abs(dist - shockRadius);
-                const ringForce = Math.exp(-ringDist * 0.35) * (1.0 - sinceShock / 2.4) * 0.55;
-                posAttr.array[i3]     -= nx * ringForce;
-                posAttr.array[i3 + 1] -= ny * ringForce;
-                posAttr.array[i3 + 2] -= nz * ringForce;
-              }
-            }
           }
           posAttr.needsUpdate = true;
-        }
 
-        /* copper material: time, shockwave flash decay, holographic flicker */
-        copperMat.uniforms.uTime.value = t;
-        copperMat.uniforms.uFlash.value = shockActive
-          ? Math.max(0, (1.0 - sinceShock / 0.6)) * 0.8
-          : 0;
-
-        if (t > flickerNextAt && flickerUntil < 0){
-          flickerUntil = t + 0.22 + Math.random() * 0.2;
-        }
-        if (flickerUntil > 0){
-          if (t < flickerUntil){
-            const glitch = Math.sin(t * 60.0) > 0 ? 0.15 : 0.85;
-            copperMat.uniforms.uOpacity.value = glitch;
-            copperEdgeMat.opacity = 1.0 - glitch * 0.5;
-          } else {
-            copperMat.uniforms.uOpacity.value = 1;
-            copperEdgeMat.opacity = 0.7;
-            flickerUntil = -1;
-            flickerNextAt = t + 5 + Math.random() * 7;
+          const microAttr = microGeo.attributes.position;
+          for (let i = 0; i < MICRO_COUNT; i++){
+            const i3 = i * 3;
+            const phase = microSeeds[i3], speed = microSeeds[i3 + 1], amp = microSeeds[i3 + 2];
+            microAttr.array[i3]     += Math.sin(t * 0.2 * speed + phase) * 0.004 * amp;
+            microAttr.array[i3 + 1] += Math.cos(t * 0.17 * speed + phase) * 0.004 * amp;
+            microAttr.array[i3 + 2] += Math.sin(t * 0.13 * speed + phase * 1.7) * 0.004 * amp;
           }
+          microAttr.needsUpdate = true;
         }
+
+        /* sacred-geometry set piece: independent rotation on every layer so
+           nothing lines up, plus each light node pulsing on its own period. */
+        relicGroup.rotation.y += 0.0011;
+        cages.forEach(c => { c.mesh.rotation.x += c.spinX; c.mesh.rotation.y += c.spinY; });
+        flowerGroup.rotation.z += 0.0016;
+        pulseNodes.forEach(n => {
+          const wave = 0.5 + 0.5 * Math.sin(t * (Math.PI * 2 / n.period) + n.phase);
+          n.sprite.scale.setScalar(n.baseScale * (0.7 + 0.55 * wave));
+          n.sprite.material.opacity = 0.35 + 0.55 * wave;
+        });
 
         shapes.forEach(s => {
           s.mesh.rotation.x += s.spin;
