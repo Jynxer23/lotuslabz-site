@@ -8,12 +8,22 @@
 </head>
 
 <body class="bg-void scanlines">
+  <canvas id="chamber-particles"></canvas>
+  <div class="vignette-static"></div>
+
   <main class="chamber">
     <div class="brand-mark">Lotus Labz</div>
+    <div class="telemetry" id="telemetry">
+      SIGNAL // <span id="telFreq">140.30</span> Hz<br>
+      DRIFT // <span id="telDrift">0.004</span><br>
+      LOCK // <span id="telLock">STABLE</span>
+    </div>
     <a class="back-link" href="index.html">Exit Void</a>
 
     <section class="orb-stage" id="orbStage">
       <div class="orb-wrap" id="orb">
+        <div class="orb-glow"></div>
+        <video src="assets/ring-interface-void.mp4" autoplay loop muted playsinline></video>
         <div class="orb-ring"></div>
         <div class="orb-ring two"></div>
         <div class="orb-ring three"></div>
@@ -78,6 +88,90 @@
       );
       showTransmission(6);
     });
+
+    /* ---------- telemetry readout, cosmetic only ---------- */
+    (function telemetryLoop(){
+      const freqEl = document.getElementById("telFreq");
+      const driftEl = document.getElementById("telDrift");
+      const lockEl = document.getElementById("telLock");
+      const lockStates = ["STABLE", "STABLE", "STABLE", "FLUCTUATING"];
+      setInterval(() => {
+        const base = 140.3 + (Math.random() - 0.5) * 0.6;
+        freqEl.textContent = base.toFixed(2);
+        driftEl.textContent = (Math.random() * 0.012).toFixed(3);
+        lockEl.textContent = lockStates[Math.floor(Math.random() * lockStates.length)];
+      }, 1800);
+    })();
+
+    /* ---------- ambient particle field, canvas 2D, no external deps ---------- */
+    (function particleField(){
+      const canvas = document.getElementById("chamber-particles");
+      const ctx = canvas.getContext("2d");
+      const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      let width, height, dpr, particles = [];
+      const COUNT = reduceMotion ? 30 : 90;
+      const palette = ["rgba(255,35,60,", "rgba(80,160,255,", "rgba(255,255,255,"];
+
+      function resize(){
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = width + "px";
+        canvas.style.height = height + "px";
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      }
+
+      function rand(a, b){ return Math.random() * (b - a) + a; }
+
+      function makeParticle(){
+        return {
+          x: rand(0, width),
+          y: rand(0, height),
+          z: rand(0.3, 1),
+          r: rand(0.5, 1.8),
+          vx: rand(-0.04, 0.04),
+          vy: rand(-0.03, -0.09),
+          color: palette[Math.floor(rand(0, palette.length))],
+          alpha: rand(0.15, 0.55),
+          pulse: rand(0, Math.PI * 2)
+        };
+      }
+
+      function init(){
+        particles = [];
+        for (let i = 0; i < COUNT; i++) particles.push(makeParticle());
+      }
+
+      function step(){
+        ctx.clearRect(0, 0, width, height);
+        for (const p of particles){
+          p.pulse += 0.015;
+          const glow = 0.5 + Math.sin(p.pulse) * 0.3;
+          p.x += p.vx * p.z;
+          p.y += p.vy * p.z;
+          if (p.y < -10) { p.y = height + 10; p.x = rand(0, width); }
+          if (p.x < -10) p.x = width + 10;
+          if (p.x > width + 10) p.x = -10;
+
+          ctx.beginPath();
+          ctx.fillStyle = p.color + (p.alpha * glow) + ")";
+          ctx.shadowBlur = 6 * p.z;
+          ctx.shadowColor = p.color + "1)";
+          ctx.arc(p.x, p.y, p.r * p.z, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.shadowBlur = 0;
+        requestAnimationFrame(step);
+      }
+
+      window.addEventListener("resize", () => { resize(); init(); });
+      resize();
+      init();
+      requestAnimationFrame(step);
+    })();
   </script>
 </body>
 </html>
