@@ -201,7 +201,7 @@
       const bgMat = new THREE.ShaderMaterial({
         side: THREE.BackSide,
         depthWrite: false,
-        uniforms: { uTime: { value: 0 } },
+        uniforms: { uTime: { value: 0 }, uCamPos: { value: new THREE.Vector3() } },
         vertexShader: `
           varying vec3 vPos;
           void main(){
@@ -211,6 +211,7 @@
         `,
         fragmentShader: `
           uniform float uTime;
+          uniform vec3 uCamPos;
           varying vec3 vPos;
 
           vec3 mod289(vec3 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -261,46 +262,51 @@
             return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
           }
 
-          /* Calm, earth/space palette -- deep navy through muted teal into
-             warm amber and soft sand. No pink or purple in the mix. */
-          vec3 palette(float t){
-            vec3 c1 = vec3(0.07, 0.12, 0.20);
-            vec3 c2 = vec3(0.12, 0.28, 0.32);
-            vec3 c3 = vec3(0.52, 0.40, 0.27);
-            vec3 c4 = vec3(0.72, 0.62, 0.50);
-            vec3 col = mix(c1, c2, smoothstep(0.0, 0.5, t));
-            col = mix(col, c3, smoothstep(0.4, 0.75, t));
-            col = mix(col, c4, smoothstep(0.75, 1.0, t));
-            return col;
+          /* HSV hue-sweep instead of RGB-interpolated anchor colors -- linear
+             RGB mixing between a cyan-ish teal and an amber previously passed
+             through a muddy olive/yellow-green band, which read as "mostly
+             green and yellow." Sweeping hue the other way around the wheel
+             (blue -> indigo -> violet -> magenta -> rose -> red -> orange)
+             stays vivid and never touches green/yellow, closer to real
+             Hubble-style nebula coloring. */
+          vec3 hsv2rgb(vec3 c){
+            vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+            vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+            return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
           }
 
           void main(){
-            /* Larger scale + gentler warp + slower drift = big soft cloud
-               shapes instead of busy detail -- reads as atmosphere, not noise. */
-            vec3 p = normalize(vPos) * 1.5;
-            float flowTime = uTime * 0.015;
+            /* uCamPos folds actual camera position into the sample coordinate
+               (scaled down) so flying through the tunnel gradually reveals
+               new nebula structure -- explorable, not a fixed backdrop that
+               only reacts to look direction. */
+            vec3 p = normalize(vPos) * 1.5 + uCamPos * 0.03;
+            float flowTime = uTime * 0.03;
 
             vec3 warp = vec3(
               snoise(p + vec3(0.0, 0.0, flowTime)),
               snoise(p + vec3(4.1, 2.3, flowTime)),
               snoise(p + vec3(1.2, 7.4, flowTime))
             );
-            vec3 warped = p + warp * 0.35;
+            vec3 warped = p + warp * 0.4;
 
             float n  = snoise(warped * 0.8 + vec3(0.0, 0.0, flowTime * 0.6));
-            float n2 = snoise(warped * 1.6 - vec3(0.0, 0.0, flowTime * 0.4));
+            float n2 = snoise(warped * 1.7 - vec3(0.0, 0.0, flowTime * 0.45));
+            float n3 = snoise(warped * 0.5 + vec3(9.0, 3.0, flowTime * 0.3));
 
             float t = n * 0.5 + 0.5;
-            vec3 col = palette(t);
+            float hueShift = n3 * 0.5 + 0.5;
+            float hue = fract(mix(0.56, 1.08, t) + hueShift * 0.06);
+            float sat = 0.5 + 0.22 * (n2 * 0.5 + 0.5);
+            float density = smoothstep(-0.25, 0.85, n2);
+            float val = 0.10 + density * 0.55;
 
-            /* Soft luminance variation only -- no fast pulsing/strobing. */
-            float glow = 0.55 + 0.35 * smoothstep(-0.3, 0.9, n2);
-            col *= glow;
+            vec3 col = hsv2rgb(vec3(hue, sat, val));
 
             float fade = smoothstep(1.0, 0.3, abs(normalize(vPos).y));
-            col *= mix(0.5, 1.0, fade);
+            col *= mix(0.55, 1.0, fade);
 
-            col = max(col, vec3(0.015, 0.02, 0.03));
+            col = max(col, vec3(0.012, 0.016, 0.026));
 
             gl_FragColor = vec4(col, 1.0);
           }
@@ -315,12 +321,22 @@
       const positions = new Float32Array(PARTICLE_COUNT * 3);
       const seeds = new Float32Array(PARTICLE_COUNT * 3);
       const colors = new Float32Array(PARTICLE_COUNT * 3);
-      const palette = [
-        new THREE.Color(0xff233c),
-        new THREE.Color(0x50a0ff),
-        new THREE.Color(0xb060ff),
-        new THREE.Color(0xffffff)
+      /* Real stellar color grading (blue-white -> white -> pale gold -> orange
+         -> red), weighted toward the blue/white end like an actual starfield,
+         instead of four flat colors including a non-physical violet. */
+      const starStops = [
+        new THREE.Color(0xaecbff),
+        new THREE.Color(0xffffff),
+        new THREE.Color(0xfff4ea),
+        new THREE.Color(0xffceac),
+        new THREE.Color(0xff8a63)
       ];
+      function starColor(t){
+        const segs = starStops.length - 1;
+        const scaled = Math.min(Math.max(t, 0), 1) * segs;
+        const idx = Math.min(Math.floor(scaled), segs - 1);
+        return starStops[idx].clone().lerp(starStops[idx + 1], scaled - idx);
+      }
       for (let i = 0; i < PARTICLE_COUNT; i++){
         const i3 = i * 3;
         positions[i3]     = (Math.random() - 0.5) * 46;
@@ -329,7 +345,7 @@
         seeds[i3]     = Math.random() * Math.PI * 2;
         seeds[i3 + 1] = 0.4 + Math.random() * 1.1;
         seeds[i3 + 2] = 0.5 + Math.random() * 0.8;
-        const c = palette[Math.floor(Math.random() * palette.length)];
+        const c = starColor(Math.pow(Math.random(), 1.7));
         colors[i3] = c.r; colors[i3 + 1] = c.g; colors[i3 + 2] = c.b;
       }
       const particleGeo = new THREE.BufferGeometry();
@@ -555,6 +571,7 @@
         });
 
         bgMat.uniforms.uTime.value = t;
+        bgMat.uniforms.uCamPos.value.copy(camera.position);
         if (frameCount % 3 === 0){
           cubeCamera.position.set(0, 0, camera.position.z - 15);
           cubeCamera.update(renderer, scene);
