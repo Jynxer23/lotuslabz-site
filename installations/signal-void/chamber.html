@@ -426,7 +426,6 @@
          actual lights are what sell "shiny metal") with a glowing edge-line
          overlay so it still reads as circuitry, not just a polished blob. */
       const shapeDefs = [
-        { geo: new THREE.TorusGeometry(2.1, 0.5, 24, 64), color: 0x9fc4ff, rough: 0.06, z: -34, x: 7, y: -3 },  // chrome / steel-blue
         { geo: new THREE.OctahedronGeometry(2.6, 0), color: 0xb060ff, rough: 0.18, z: -58, x: -7, y: -2 },  // amethyst
         { geo: new THREE.IcosahedronGeometry(1.6, 1), color: 0xd7dbe4, rough: 0.05, z: -78, x: 6, y: 3 },   // gunmetal / silver, near-mirror
         { geo: new THREE.TorusKnotGeometry(1.5, 0.35, 160, 20), color: 0xffce6b, rough: 0.12, z: -96, x: 0, y: -4 } // gold
@@ -455,6 +454,66 @@
         scene.add(mesh);
         return { mesh, spin: (Math.random() - 0.5) * 0.006 + (Math.random() < 0.5 ? -0.002 : 0.002) };
       });
+
+      /* ================= fractal tube-castle (Field 02) ================= */
+      /* Recursive torus chain -- every ring spawns smaller rings around its
+         own circumference, which each spawn smaller rings again, so it reads
+         as a linked innertube castle growing outward. Branch placement uses
+         the golden angle (~137.5deg) at each generation for an organic,
+         non-repeating spread instead of a rigid, obviously-symmetric grid --
+         a classic sacred-geometry spacing constant (phyllotaxis). Pure mirror
+         chrome throughout, no edge-line overlay here, so the reflections stay
+         the star of the piece. */
+      const GOLDEN_ANGLE = 2.39996323;
+      const castleBaseColor = new THREE.Color(0x9fc4ff);
+      const castleTipColor = new THREE.Color(0xffffff);
+      const castleGroup = new THREE.Group();
+      castleGroup.position.set(7, -3, -34);
+      scene.add(castleGroup);
+
+      function buildTubeCastle(parent, radius, tube, depth, maxDepth){
+        const radialSeg = Math.max(6, 16 - depth * 2);
+        const tubularSeg = Math.max(12, 48 - depth * 8);
+        const geo = new THREE.TorusGeometry(radius, tube, radialSeg, tubularSeg);
+        const tint = castleBaseColor.clone().lerp(castleTipColor, (depth / maxDepth) * 0.45);
+        const mat = new THREE.MeshPhysicalMaterial({
+          color: tint,
+          metalness: 1.0,
+          roughness: 0.035,
+          envMap: cubeRenderTarget.texture,
+          envMapIntensity: 2.4,
+          clearcoat: 0.8,
+          clearcoatRoughness: 0.04
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        parent.add(mesh);
+
+        if (depth >= maxDepth) return;
+
+        const branches = 3;
+        for (let i = 0; i < branches; i++){
+          const theta = GOLDEN_ANGLE * (i + 1 + depth * 5);
+          const point = new THREE.Vector3(Math.cos(theta) * radius, Math.sin(theta) * radius, 0);
+          const outward = point.clone().normalize();
+
+          const childRadius = radius * 0.52;
+          const childTube = tube * 0.52;
+
+          const childFrame = new THREE.Group();
+          childFrame.position.copy(point).addScaledVector(outward, childRadius * 0.85);
+
+          const align = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 0, 1), outward);
+          const twist = new THREE.Quaternion().setFromAxisAngle(outward, GOLDEN_ANGLE * (i * 3 + depth));
+          align.premultiply(twist);
+          childFrame.quaternion.copy(align);
+
+          parent.add(childFrame);
+          buildTubeCastle(childFrame, childRadius, childTube, depth + 1, maxDepth);
+        }
+      }
+      buildTubeCastle(castleGroup, 2.1, 0.5, 0, 4);
+
+      shapes.push({ mesh: castleGroup, spin: (Math.random() - 0.5) * 0.004 });
 
       /* ================= sacred-geometry set piece (Field 01) ================= */
       /* A scene of its own: an iridescent mirror core (real thin-film
