@@ -95,6 +95,17 @@
   <div class="corner">Signal Void // Active</div>
   <div class="bottom-line"></div>
 
+  <!-- Eclipse world: 4 branching timelines sharing one origin frame -->
+  <button class="world-enter" id="worldEnter" type="button">Enter The Eclipse</button>
+  <div class="world-hud" id="worldHud">
+    <div class="world-hint">Look around to choose a timeline</div>
+    <button class="world-exit" id="worldExit" type="button" aria-label="Return to the void">&times;</button>
+  </div>
+  <video id="eclipseVideo0" class="eclipse-video" src="assets/videos/eclipse-0.mp4" muted playsinline preload="auto"></video>
+  <video id="eclipseVideo1" class="eclipse-video" src="assets/videos/eclipse-1.mp4" muted playsinline preload="auto"></video>
+  <video id="eclipseVideo2" class="eclipse-video" src="assets/videos/eclipse-2.mp4" muted playsinline preload="auto"></video>
+  <video id="eclipseVideo3" class="eclipse-video" src="assets/videos/eclipse-3.mp4" muted playsinline preload="auto"></video>
+
   <script type="module">
     /* Single, well-established CDN import only — no postprocessing chain,
        so one flaky nested import can't take the whole page down. */
@@ -824,6 +835,79 @@
         }
       });
 
+      /* ================= eclipse world: 4 branching video timelines ================= */
+      /* All 4 clips share the same first frame -- pixel-diffed to confirm.
+         They sit far past the normal tunnel range so fog naturally hides
+         them until you actually enter; whichever screen you're most directly
+         facing plays (resuming from wherever it paused, not restarting), and
+         looking away pauses it in place rather than resetting it. */
+      const ECLIPSE_Z = -220;
+      const eclipseEntry = new THREE.Vector3(0, 0, ECLIPSE_Z);
+      const eclipseGroup = new THREE.Group();
+      scene.add(eclipseGroup);
+
+      const eclipseVideos = [0, 1, 2, 3].map(i => document.getElementById("eclipseVideo" + i));
+      const eclipseScreenAngles = [-70, -23, 23, 70];
+      const eclipseScreens = eclipseVideos.map((video, i) => {
+        const texture = new THREE.VideoTexture(video);
+        if ("colorSpace" in texture) texture.colorSpace = THREE.SRGBColorSpace;
+        const geo = new THREE.PlaneGeometry(8, 4.5);
+        const mat = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide, toneMapped: false });
+        const mesh = new THREE.Mesh(geo, mat);
+
+        const rad = eclipseScreenAngles[i] * Math.PI / 180;
+        const R = 11;
+        const yOff = i % 2 === 0 ? 0.5 : -0.5;
+        mesh.position.set(
+          eclipseEntry.x + Math.sin(rad) * R,
+          eclipseEntry.y + yOff,
+          eclipseEntry.z - Math.cos(rad) * R
+        );
+        mesh.lookAt(eclipseEntry.x, mesh.position.y, eclipseEntry.z);
+
+        const frame = new THREE.LineSegments(
+          new THREE.EdgesGeometry(geo),
+          new THREE.LineBasicMaterial({ color: 0xffb060, transparent: true, opacity: 0.45 })
+        );
+        mesh.add(frame);
+
+        eclipseGroup.add(mesh);
+        video.pause();
+        try { video.currentTime = 0; } catch (err) {}
+        return { mesh, video, mat, frame };
+      });
+
+      let inEclipseWorld = false;
+      let eclipseFocusIndex = -1;
+      const worldEnterBtn = document.getElementById("worldEnter");
+      const worldHud = document.getElementById("worldHud");
+      const worldExitBtn = document.getElementById("worldExit");
+      const progressRailEl = document.getElementById("progressRail");
+      const telemetryEl = document.getElementById("telemetry");
+
+      function enterEclipseWorld(){
+        if (inEclipseWorld) return;
+        inEclipseWorld = true;
+        worldEnterBtn.classList.remove("is-visible");
+        worldHud.classList.add("is-active");
+        hint.classList.add("is-hidden");
+        progressRailEl.style.opacity = "0";
+        telemetryEl.style.opacity = "0";
+        document.body.style.overflow = "hidden";
+      }
+      function exitEclipseWorld(){
+        if (!inEclipseWorld) return;
+        inEclipseWorld = false;
+        worldHud.classList.remove("is-active");
+        progressRailEl.style.opacity = "";
+        telemetryEl.style.opacity = "";
+        document.body.style.overflow = "";
+        eclipseScreens.forEach(s => s.video.pause());
+        eclipseFocusIndex = -1;
+      }
+      worldEnterBtn.addEventListener("click", enterEclipseWorld);
+      worldExitBtn.addEventListener("click", exitEclipseWorld);
+
       /* ================= free look: passive mouse position + click-hold-drag ================= */
       /* Two controls stack together, both on window (not the canvas) so
          neither depends on what UI happens to be layered on top at a given
@@ -907,9 +991,46 @@
         yaw += (yawTarget - yaw) * 0.16;
         pitch += (pitchTarget - pitch) * 0.16;
 
-        const targetZ = THREE.MathUtils.lerp(Z_START, Z_END, progress);
-        camera.position.z += (targetZ - camera.position.z) * 0.08;
+        /* show the "Enter The Eclipse" prompt once you're near the signal
+           core, unless you're already inside the world */
+        if (!inEclipseWorld){
+          const distToCore = camera.position.distanceTo(coreGroup.position);
+          worldEnterBtn.classList.toggle("is-visible", distToCore < 16);
+        }
+
+        if (inEclipseWorld){
+          camera.position.x += (eclipseEntry.x - camera.position.x) * 0.06;
+          camera.position.y += (eclipseEntry.y - camera.position.y) * 0.06;
+          camera.position.z += (eclipseEntry.z - camera.position.z) * 0.06;
+        } else {
+          const targetZ = THREE.MathUtils.lerp(Z_START, Z_END, progress);
+          camera.position.z += (targetZ - camera.position.z) * 0.08;
+        }
         camera.quaternion.setFromEuler(new THREE.Euler(pitch, yaw, 0, "YXZ"));
+
+        if (inEclipseWorld){
+          const camDir = new THREE.Vector3();
+          camera.getWorldDirection(camDir);
+          let bestIdx = -1, bestDot = -1;
+          eclipseScreens.forEach((s, i) => {
+            const toScreen = s.mesh.position.clone().sub(camera.position).normalize();
+            const dot = camDir.dot(toScreen);
+            if (dot > bestDot){ bestDot = dot; bestIdx = i; }
+          });
+          if (bestIdx !== eclipseFocusIndex){
+            if (eclipseFocusIndex >= 0) eclipseScreens[eclipseFocusIndex].video.pause();
+            eclipseFocusIndex = bestIdx;
+            const s = eclipseScreens[bestIdx];
+            const p = s.video.play();
+            if (p && p.catch) p.catch(() => {});
+          }
+          eclipseScreens.forEach((s, i) => {
+            const focused = i === eclipseFocusIndex;
+            s.mat.color.setScalar(focused ? 1.0 : 0.32);
+            s.frame.material.opacity = focused ? 0.85 : 0.3;
+            s.mesh.scale.setScalar(focused ? 1.04 : 1.0);
+          });
+        }
 
         const t = clock.elapsedTime;
 
