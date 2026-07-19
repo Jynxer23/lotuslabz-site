@@ -193,6 +193,116 @@
       }
       const glowTex = makeGlowTexture();
 
+      /* ================= animated circuit/fluid background ================= */
+      /* Replaces the old static PNG backdrop with a procedural, resolution-
+         independent shader -- flowing, domain-warped noise thresholded into
+         thin traces so it reads as circuitry with fluid, living motion. */
+      const bgGeo = new THREE.SphereGeometry(180, 48, 32);
+      const bgMat = new THREE.ShaderMaterial({
+        side: THREE.BackSide,
+        depthWrite: false,
+        uniforms: { uTime: { value: 0 } },
+        vertexShader: `
+          varying vec3 vPos;
+          void main(){
+            vPos = position;
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }
+        `,
+        fragmentShader: `
+          uniform float uTime;
+          varying vec3 vPos;
+
+          vec3 mod289(vec3 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
+          vec4 mod289(vec4 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
+          vec4 permute(vec4 x){ return mod289(((x * 34.0) + 1.0) * x); }
+          vec4 taylorInvSqrt(vec4 r){ return 1.79284291400159 - 0.85373472095314 * r; }
+
+          float snoise(vec3 v){
+            const vec2 C = vec2(1.0 / 6.0, 1.0 / 3.0);
+            const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+            vec3 i  = floor(v + dot(v, C.yyy));
+            vec3 x0 = v - i + dot(i, C.xxx);
+            vec3 g = step(x0.yzx, x0.xyz);
+            vec3 l = 1.0 - g;
+            vec3 i1 = min(g.xyz, l.zxy);
+            vec3 i2 = max(g.xyz, l.zxy);
+            vec3 x1 = x0 - i1 + C.xxx;
+            vec3 x2 = x0 - i2 + C.yyy;
+            vec3 x3 = x0 - D.yyy;
+            i = mod289(i);
+            vec4 p = permute(permute(permute(
+                      i.z + vec4(0.0, i1.z, i2.z, 1.0))
+                    + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+                    + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+            float n_ = 0.142857142857;
+            vec3 ns = n_ * D.wyz - D.xzx;
+            vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+            vec4 x_ = floor(j * ns.z);
+            vec4 y_ = floor(j - 7.0 * x_);
+            vec4 x = x_ * ns.x + ns.yyyy;
+            vec4 y = y_ * ns.x + ns.yyyy;
+            vec4 h = 1.0 - abs(x) - abs(y);
+            vec4 b0 = vec4(x.xy, y.xy);
+            vec4 b1 = vec4(x.zw, y.zw);
+            vec4 s0 = floor(b0) * 2.0 + 1.0;
+            vec4 s1 = floor(b1) * 2.0 + 1.0;
+            vec4 sh = -step(h, vec4(0.0));
+            vec4 a0 = b0.xzyw + s0.xzyw * sh.xxyy;
+            vec4 a1 = b1.xzyw + s1.xzyw * sh.zzww;
+            vec3 p0 = vec3(a0.xy, h.x);
+            vec3 p1 = vec3(a0.zw, h.y);
+            vec3 p2 = vec3(a1.xy, h.z);
+            vec3 p3 = vec3(a1.zw, h.w);
+            vec4 norm = taylorInvSqrt(vec4(dot(p0, p0), dot(p1, p1), dot(p2, p2), dot(p3, p3)));
+            p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+            vec4 m = max(0.6 - vec4(dot(x0, x0), dot(x1, x1), dot(x2, x2), dot(x3, x3)), 0.0);
+            m = m * m;
+            return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
+          }
+
+          vec3 palette(float t){
+            vec3 c1 = vec3(1.0, 0.14, 0.24);
+            vec3 c2 = vec3(0.31, 0.63, 1.0);
+            vec3 c3 = vec3(0.69, 0.38, 1.0);
+            vec3 col = mix(c1, c2, smoothstep(0.0, 0.55, t));
+            col = mix(col, c3, smoothstep(0.55, 1.0, t));
+            return col;
+          }
+
+          void main(){
+            vec3 p = normalize(vPos) * 3.4;
+            float flowTime = uTime * 0.06;
+
+            vec3 warp = vec3(
+              snoise(p + vec3(0.0, 0.0, flowTime)),
+              snoise(p + vec3(5.2, 1.3, flowTime)),
+              snoise(p + vec3(1.7, 9.2, flowTime))
+            );
+            vec3 warped = p + warp * 0.9;
+
+            float n  = snoise(warped * 1.6 + vec3(0.0, 0.0, flowTime * 1.4));
+            float n2 = snoise(warped * 3.1 - vec3(0.0, 0.0, flowTime * 0.7));
+
+            float lines = abs(fract(n * 4.0 + n2 * 2.0) - 0.5);
+            float trace = smoothstep(0.07, 0.0, lines);
+
+            float glowPulse = 0.5 + 0.5 * sin(n2 * 12.0 - uTime * 1.4);
+            vec3 col = palette(n * 0.5 + 0.5) * trace * (0.6 + glowPulse * 0.8);
+
+            col += vec3(0.02, 0.015, 0.03) + 0.02 * n2;
+
+            float fade = smoothstep(1.0, 0.35, abs(normalize(vPos).y));
+            col *= mix(0.35, 1.0, fade);
+
+            gl_FragColor = vec4(col, 1.0);
+          }
+        `
+      });
+      const bgSphere = new THREE.Mesh(bgGeo, bgMat);
+      scene.add(bgSphere);
+
+
       /* particle field */
       const PARTICLE_COUNT = reduceMotion ? 700 : 2000;
       const positions = new Float32Array(PARTICLE_COUNT * 3);
@@ -230,18 +340,35 @@
       const particles = new THREE.Points(particleGeo, particleMat);
       scene.add(particles);
 
-      /* abstract floating wireframe geometry, scattered along the journey */
+      /* abstract floating geometry, scattered along the journey -- solid metal
+         core (reflects the environment via the dynamic cube probe below) with
+         a glowing edge-line overlay so it still reads as circuitry, not just
+         a shiny blob. Each shape gets its own metal/gem tone. */
       const shapeDefs = [
-        { geo: new THREE.IcosahedronGeometry(2.4, 0), color: 0xff233c, z: -16, x: -6, y: 2 },
-        { geo: new THREE.TorusGeometry(2.1, 0.5, 8, 24), color: 0x50a0ff, z: -34, x: 7, y: -3 },
-        { geo: new THREE.OctahedronGeometry(2.6, 0), color: 0xb060ff, z: -58, x: -7, y: -2 },
-        { geo: new THREE.IcosahedronGeometry(1.6, 1), color: 0x50a0ff, z: -78, x: 6, y: 3 },
-        { geo: new THREE.TorusKnotGeometry(1.5, 0.35, 64, 8), color: 0xff233c, z: -96, x: 0, y: -4 }
+        { geo: new THREE.IcosahedronGeometry(2.4, 0), color: 0xff6a3c, rough: 0.3,  z: -16, x: -6, y: 2 },  // copper
+        { geo: new THREE.TorusGeometry(2.1, 0.5, 16, 48), color: 0x9fc4ff, rough: 0.18, z: -34, x: 7, y: -3 },  // chrome / steel-blue
+        { geo: new THREE.OctahedronGeometry(2.6, 0), color: 0xb060ff, rough: 0.32, z: -58, x: -7, y: -2 },  // amethyst
+        { geo: new THREE.IcosahedronGeometry(1.6, 1), color: 0xd7dbe4, rough: 0.12, z: -78, x: 6, y: 3 },   // gunmetal / silver
+        { geo: new THREE.TorusKnotGeometry(1.5, 0.35, 128, 16), color: 0xffce6b, rough: 0.24, z: -96, x: 0, y: -4 } // gold
       ];
       const shapes = shapeDefs.map(def => {
-        const mat = new THREE.MeshBasicMaterial({ color: def.color, wireframe: true, transparent: true, opacity: 0.55 });
+        const mat = new THREE.MeshPhysicalMaterial({
+          color: def.color,
+          metalness: 1.0,
+          roughness: def.rough,
+          envMapIntensity: 1.5,
+          clearcoat: 0.4,
+          clearcoatRoughness: 0.2
+        });
         const mesh = new THREE.Mesh(def.geo, mat);
         mesh.position.set(def.x, def.y, def.z);
+
+        const edges = new THREE.LineSegments(
+          new THREE.EdgesGeometry(def.geo),
+          new THREE.LineBasicMaterial({ color: def.color, transparent: true, opacity: 0.7 })
+        );
+        mesh.add(edges);
+
         scene.add(mesh);
         return { mesh, spin: (Math.random() - 0.5) * 0.006 + (Math.random() < 0.5 ? -0.002 : 0.002) };
       });
@@ -282,6 +409,19 @@
       coreGroup.add(ringB);
 
       scene.add(coreGroup);
+
+      /* ================= dynamic reflection probe ================= */
+      /* Captures the live scene (background shader, particles, other shapes)
+         into a small cubemap so the metallic shapes actually mirror what's
+         around them, instead of a fixed fake environment. Throttled to every
+         3rd frame and rendered at low resolution to keep the cost down. */
+      const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(128, {
+        generateMipmaps: true,
+        minFilter: THREE.LinearMipmapLinearFilter
+      });
+      const cubeCamera = new THREE.CubeCamera(0.1, 200, cubeRenderTarget);
+      scene.add(cubeCamera);
+      scene.environment = cubeRenderTarget.texture;
 
       /* ================= interaction ================= */
       const raycaster = new THREE.Raycaster();
@@ -373,6 +513,7 @@
       const Z_START = 24, Z_END = -108;
 
       const clock = new THREE.Clock();
+      let frameCount = 0;
       function animate(){
         requestAnimationFrame(animate);
 
@@ -406,6 +547,13 @@
           s.mesh.rotation.y += s.spin * 1.4;
         });
 
+        bgMat.uniforms.uTime.value = t;
+        if (frameCount % 3 === 0){
+          cubeCamera.position.set(0, 0, camera.position.z - 15);
+          cubeCamera.update(renderer, scene);
+        }
+        frameCount++;
+
         coreGroup.rotation.y += 0.0035;
         ringA.rotation.z += 0.004;
         ringB.rotation.z -= 0.003;
@@ -420,6 +568,8 @@
       }
 
       onResize();
+      cubeCamera.position.set(0, 0, camera.position.z - 15);
+      cubeCamera.update(renderer, scene);
       animate();
       sceneReady = true;
     } catch (err) {
