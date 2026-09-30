@@ -130,6 +130,9 @@ footer{text-align:center;padding:40px 20px;border-top:1px solid var(--line);colo
 .tier li+li{margin-top:10px}
 .tier li strong{color:var(--text)}
 .src{display:inline-block;margin-left:2px;padding:1px 8px;border:1px solid rgba(255,255,255,.2);border-radius:999px;font-style:normal;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#d9dce3;white-space:nowrap}
+.tier--dev{border-color:rgba(166,119,255,.36)}.tier--dev .tier-label{color:#b58cff}
+.tier-intro{margin:-4px 0 12px;color:var(--muted);font-size:.84rem}
+.tier--wide{margin-top:16px;padding:20px 24px}.tier--wide p{margin:8px 0 0;color:var(--muted);font-size:.95rem}.tier--wide strong{color:var(--text)}
 .tier-note{margin:16px 0 0;color:var(--muted);font-size:.9rem}.tier-note strong{color:var(--text)}
 .audience-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
 
