@@ -6,9 +6,9 @@
 <title>CYMATIK | Audio-Reactive Visual Instrument by Lotus Labz</title>
 <meta name="description" content="CYMATIK is an audio-reactive visual instrument built around responsive physical worlds: a working prototype from Lotus Labz, in active development toward a commercial creative instrument.">
 <link rel="stylesheet" href="../assets/storefront.css">
-</head>
+<link rel="stylesheet" href="../assets/site.css"><script src="../assets/site.js"></script></head>
 <body>
-<header><nav><a class="brand" href="../" aria-label="Lotus Labz home"><img class="brand-mark" src="../assets/lotus-labz-mark-red-v2-web.png" alt=""><span class="brand-word">Lotus Labz</span></a><ul><li><a href="../visuals.html">Video Archive</a></li><li><a href="../design.html">Visual Design</a></li><li><a href="../music.html">Music Library</a></li><li><a href="./" aria-current="page">CYMATIK</a></li><li><a href="../store/">Store</a></li><li><a href="../lotus-labz.html">Collaborate</a></li></ul></nav></header>
+<header class="site-header"><nav class="site-nav" aria-label="Primary"><a class="brand" href="../" aria-label="Lotus Labz home"><img class="brand-mark" src="../assets/lotus-labz-mark-red-v2-web.png" alt=""><span class="brand-word">Lotus Labz</span></a><button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu"><span class="bars"></span></button><ul class="site-menu" id="site-menu"><li><a href="../visuals.html">Video Archive</a></li><li><a href="../design.html">Visual Design</a></li><li><a href="../music.html">Music Library</a></li><li><a class="nav-cymatik" href="../cymatik/" aria-current="page">CYMATIK</a></li><li><a href="../store/">Store</a></li><li><a href="../lotus-labz.html">Collaborate</a></li></ul></nav></header>
 <main>
 
 <section class="product-hero shell"><div class="product-layout"><div class="product-copy"><span class="eyebrow">Lotus Labz Flagship Instrument</span><h1>CYMATIK</h1><div class="tagline">Same soul. Higher dimension.</div><p class="lead">An audio-reactive visual instrument built around responsive physical worlds.</p><p class="concept">Design a reality.<br>Let sound disturb it.<br>See what happens.</p><div class="button-row"><button type="button" class="btn" data-cymatik-open>Watch the Prototype</button><span class="btn coming" aria-label="CYMATIK is coming soon">Coming Soon</span></div></div>
@@ -53,47 +53,6 @@
 <section class="release-cta shell"><span class="eyebrow">Flagship Instrument</span><h2>A world waiting to be disturbed.</h2><p>CYMATIK is in active development. Watch it run, then follow along, or get in touch to collaborate.</p><div class="button-row"><button type="button" class="btn" data-cymatik-open>Watch the Prototype</button><a class="btn secondary" href="mailto:jynx@lotuslabz.net?subject=CYMATIK">Talk to Lotus Labz</a><a class="btn secondary" href="../">Back to Lotus Labz</a></div></section>
 </main>
 <footer>© 2026 Lotus Labz — Electronic Music • AI Art • Cybernetic Media</footer>
-<script>
-(function(){
-  var stage=document.getElementById("cymatikStage");
-  if(!stage)return;
-  var video=document.getElementById("cymatikVideo"),
-      closeBtn=document.getElementById("cymatikClose"),
-      triggers=document.querySelectorAll("[data-cymatik-open]"),
-      lastTrigger=null;
-  function setFocus(el){
-    var go=function(){try{el.focus({preventScroll:true});}catch(e){el.focus();}};
-    if(window.requestAnimationFrame){window.requestAnimationFrame(go);}else{go();}
-  }
-  function rewind(){try{video.currentTime=0;}catch(e){}}
-  function inView(el){var r=el.getBoundingClientRect();return r.top>=0&&r.bottom<=(window.innerHeight||document.documentElement.clientHeight);}
-  function openPreview(ev){
-    lastTrigger=ev.currentTarget;
-    if(!inView(stage)){stage.scrollIntoView({behavior:"smooth",block:"center"});}
-    stage.classList.add("is-playing");
-    rewind();
-    var p=video.play();
-    if(p&&typeof p.catch==="function"){p.catch(function(){video.controls=true;});}
-    setFocus(closeBtn);
-  }
-  function resetPreview(){
-    if(!stage.classList.contains("is-playing"))return;
-    var focusWasInside=stage.contains(document.activeElement);
-    video.pause();
-    rewind();
-    stage.classList.remove("is-playing");
-    if(lastTrigger&&focusWasInside)setFocus(lastTrigger);
-    lastTrigger=null;
-  }
-  for(var i=0;i<triggers.length;i++){triggers[i].addEventListener("click",openPreview);}
-  closeBtn.addEventListener("click",resetPreview);
-  video.addEventListener("ended",resetPreview);
-  document.addEventListener("keydown",function(ev){
-    if(ev.key!=="Escape"&&ev.key!=="Esc")return;
-    if(document.fullscreenElement||document.webkitFullscreenElement)return;
-    resetPreview();
-  });
-})();
-</script>
+<script src="../assets/cymatik-player.js"></script>
 </body>
 </html>

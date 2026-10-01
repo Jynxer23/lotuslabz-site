@@ -1,0 +1,59 @@
+/* Lotus Labz shared header + bridge styles. Loaded last on every page so it wins over per-page legacy header rules. */
+.site-header{padding:12px 22px;border-bottom:1px solid rgba(255,255,255,.13);background:rgba(0,0,0,.84);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);position:sticky;top:0;z-index:30}
+.site-header .site-nav{display:flex;flex-direction:row;align-items:center;justify-content:space-between;max-width:1180px;margin:0 auto;gap:24px}
+.site-header .brand{display:flex;align-items:center;gap:14px;flex:none;color:#fff;text-decoration:none}
+.site-header .brand-mark{display:block;height:44px;width:auto}
+.site-header .brand-word{color:#ff3a42;font-weight:800;font-size:1.05rem;letter-spacing:.34em;text-transform:uppercase;white-space:nowrap}
+.site-header .brand:hover .brand-word{color:#fff}
+.site-header .site-menu{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:4px 24px;list-style:none;padding:0;margin:0}
+.site-header .site-menu a{display:inline-block;color:#fff;text-decoration:none;font-size:.95rem;padding:6px 0;border-bottom:2px solid transparent;white-space:nowrap}
+.site-header .site-menu a:hover{color:#ff1820}
+.site-header .site-menu a[aria-current="page"]{color:#ff3a42;font-weight:800;border-bottom-color:#ff3a42}
+.site-header .site-menu a.nav-cymatik{font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:.86rem}
+.site-header .site-menu a.nav-cymatik:before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:#28a9ff;box-shadow:0 0 9px #28a9ff;margin-right:8px;vertical-align:middle;position:relative;top:-1px}
+.site-header .nav-toggle{display:none;flex:none;width:44px;height:44px;padding:0;border:1px solid rgba(255,255,255,.22);border-radius:12px;background:rgba(255,255,255,.04);cursor:pointer;position:relative;color:#fff}
+.site-header .nav-toggle:hover{border-color:#ff1820}
+.site-header .nav-toggle .bars,.site-header .nav-toggle .bars:before,.site-header .nav-toggle .bars:after{display:block;position:absolute;left:12px;width:18px;height:2px;border-radius:2px;background:#fff;content:"";transition:transform .2s,opacity .2s,top .2s}
+.site-header .nav-toggle .bars{top:21px}
+.site-header .nav-toggle .bars:before{left:0;top:-6px}
+.site-header .nav-toggle .bars:after{left:0;top:6px}
+.site-header .nav-toggle[aria-expanded="true"] .bars{background:transparent}
+.site-header .nav-toggle[aria-expanded="true"] .bars:before{top:0;transform:rotate(45deg)}
+.site-header .nav-toggle[aria-expanded="true"] .bars:after{top:0;transform:rotate(-45deg)}
+
+@media(max-width:1000px){
+  .site-header{padding:10px 16px}
+  .site-header .brand-mark{height:38px}
+  .site-header .brand-word{font-size:.84rem;letter-spacing:.24em}
+  /* no-JS fallback: links wrap in a compact row under the brand */
+  .site-header .site-nav{flex-wrap:wrap}
+  .site-header .site-menu{flex-wrap:wrap;gap:2px 16px;width:100%}
+  /* JS present: collapse into a toggle menu */
+  .nav-js .site-header .nav-toggle{display:block}
+  .nav-js .site-header .site-nav{flex-wrap:nowrap}
+  .nav-js .site-header .site-menu{display:none;position:absolute;left:0;right:0;top:100%;flex-direction:column;align-items:stretch;gap:0;width:auto;padding:6px 16px 14px;background:rgba(4,5,8,.97);border-bottom:1px solid rgba(255,24,32,.4);box-shadow:0 24px 40px rgba(0,0,0,.6)}
+  .nav-js .site-header .site-menu.is-open{display:flex}
+  .nav-js .site-header .site-menu li{border-top:1px solid rgba(255,255,255,.09)}
+  .nav-js .site-header .site-menu li:first-child{border-top:0}
+  .nav-js .site-header .site-menu a{display:block;padding:14px 4px;font-size:1rem;border-bottom:0}
+  .nav-js .site-header .site-menu a[aria-current="page"]{box-shadow:inset 3px 0 0 #ff3a42;padding-left:12px}
+}
+
+/* "Lineage" band: ties creative pages back to the CYMATIK direction without rewriting their content */
+.lineage{max-width:1180px;margin:10px auto 0;padding:0 20px 56px}
+.lineage-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:22px 26px;border:1px solid rgba(255,255,255,.13);border-left:3px solid #ff1820;border-radius:18px;background:linear-gradient(90deg,rgba(255,24,32,.09),rgba(7,10,15,.8) 55%),rgba(7,10,15,.8);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.lineage-copy{margin:0;color:#b8c1cc;line-height:1.6;max-width:760px}
+.lineage-copy strong{display:block;color:#f7f8fb;font-size:1.05rem;margin-bottom:4px}
+.lineage-link{flex:none;color:#fff;text-decoration:none;font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:.82rem;padding:12px 20px;border:1px solid rgba(40,169,255,.6);border-radius:999px;white-space:nowrap}
+.lineage-link:hover{color:#fff;border-color:#ff1820;box-shadow:0 0 22px rgba(255,24,32,.28)}
+@media(max-width:700px){.lineage{padding:0 16px 44px}.lineage-inner{flex-direction:column;align-items:flex-start;padding:20px}.lineage-link{width:100%;text-align:center}}
+.eyebrow-lead{margin-bottom:12px}
+/* Store: product facts + services row (storefront.css provides .tier, .shell, .status, .btn) */
+.store-facts{padding-bottom:36px}
+.store-facts .tier-grid{grid-template-columns:repeat(2,1fr)}
+.store-facts dl{margin:12px 0 0;display:grid;grid-template-columns:auto 1fr;gap:8px 18px;color:#b8c1cc;font-size:.95rem}
+.store-facts dt{color:#f7f8fb;font-weight:800}
+.store-facts dd{margin:0}
+.store-facts .tier p{margin:8px 0 0;color:#b8c1cc;font-size:.95rem}
+.store-facts .button-row{margin-top:16px}
+@media(max-width:900px){.store-facts .tier-grid{grid-template-columns:1fr}}

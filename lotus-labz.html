@@ -107,9 +107,9 @@ h1{font-size:clamp(3rem,7vw,5.05rem);line-height:.95;margin:0 0 22px;text-align:
 footer{text-align:center;padding:40px 20px;border-top:1px solid var(--line);color:var(--muted);background:rgba(0,0,0,.62)}
 @media(max-width:980px){.service-grid,.portfolio-grid{grid-template-columns:1fr}.collab-panel{padding:34px 22px}.service-card{min-height:auto}.panel-logo{margin-bottom:125px}.portfolio-title{letter-spacing:.16em;gap:10px}.portfolio-title:before,.portfolio-title:after{width:30px}nav{align-items:flex-start;gap:16px;flex-direction:column}nav ul{flex-wrap:wrap;gap:14px}.logo{height:70px;max-width:360px;transform:scale(1.4);transform-origin:left center}}
 </style>
-</head>
+<link rel="stylesheet" href="assets/site.css"><script src="assets/site.js"></script></head>
 <body>
-<header><nav><a href="index.html"><img src="lotus-labz-logo.png" class="logo" alt="Lotus Labz Logo"></a><ul><li><a href="visuals.html">Video Archive</a></li><li><a href="design.html">Visual Design</a></li><li><a href="music.html">Music Library</a></li><li><a href="store/">Store</a></li><li><a href="lotus-labz.html">Collaborate</a></li></ul></nav></header>
+<header class="site-header"><nav class="site-nav" aria-label="Primary"><a class="brand" href="index.html" aria-label="Lotus Labz home"><img class="brand-mark" src="assets/lotus-labz-mark-red-v2-web.png" alt=""><span class="brand-word">Lotus Labz</span></a><button type="button" class="nav-toggle" aria-expanded="false" aria-controls="site-menu" aria-label="Open menu"><span class="bars"></span></button><ul class="site-menu" id="site-menu"><li><a href="visuals.html">Video Archive</a></li><li><a href="design.html">Visual Design</a></li><li><a href="music.html">Music Library</a></li><li><a class="nav-cymatik" href="cymatik/">CYMATIK</a></li><li><a href="store/">Store</a></li><li><a href="lotus-labz.html" aria-current="page">Collaborate</a></li></ul></nav></header>
 <main class="collab-shell">
   <section class="collab-panel">
     <div class="top-logo"><img src="assets/lotus-red-logo.png" alt="Lotus Labz red lotus logo"></div>
@@ -145,6 +145,7 @@ footer{text-align:center;padding:40px 20px;border-top:1px solid var(--line);colo
     </div>
   </section>
 </main>
+<aside class="lineage" aria-label="From the creative work to CYMATIK"><div class="lineage-inner"><p class="lineage-copy"><strong>Creative services, plus creative technology.</strong>Lotus Labz also develops CYMATIK, a real-time audiovisual instrument in active development. If your interest is the software rather than a commission, start there.</p><a class="lineage-link" href="cymatik/">See CYMATIK &rarr;</a></div></aside>
 <footer>© 2026 Lotus Labz — Electronic Music • AI Art • Cybernetic Media</footer>
 </body>
 </html>
