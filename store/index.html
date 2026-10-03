@@ -17,11 +17,20 @@
 <section class="shell store-products">
   <h2 class="visually-hidden" id="flagship-heading">Flagship Product</h2>
   <article class="cymatik-showcase" aria-labelledby="flagship-heading">
-    <a class="cymatik-showcase-link" href="../cymatik/" aria-label="Explore CYMATIK — audio-reactive visual instrument by Lotus Labz">
-      <img class="cymatik-showcase-img" src="../assets/CYMATIK PromoCard.png" alt="CYMATIK by Lotus Labz — audio-reactive visual instrument. Sound becomes terrain. Coming soon.">
-    </a>
+    <div class="cymatik-stage" id="cymatikStage">
+      <div class="cymatik-promo">
+        <img class="cymatik-card" src="../assets/cymatik-live-performance-promo.png" alt="CYMATIK by Lotus Labz — live performance. Audio-reactive visual instrument in action.">
+        <button type="button" class="cymatik-trigger cymatik-trigger--watchproto" data-cymatik-open aria-label="Watch the CYMATIK prototype demo"></button>
+      </div>
+      <div class="cymatik-player">
+        <video class="cymatik-video" id="cymatikVideo" controls playsinline preload="none">
+          <source src="../media/cymatik-web-preview.mp4" type="video/mp4">Your browser does not support the video tag.
+        </video>
+        <button type="button" class="cymatik-close" id="cymatikClose" aria-label="Close demo and return to the CYMATIK card">&times;</button>
+      </div>
+    </div>
     <div class="cymatik-showcase-bar">
-      <span class="status">Coming Soon</span>
+      <span class="status">Working prototype</span>
       <a class="btn" href="../cymatik/">Explore CYMATIK <span aria-hidden="true">→</span></a>
     </div>
   </article>
@@ -30,8 +39,8 @@
   <h2 class="visually-hidden" id="facts-heading">Product status and services</h2>
   <div class="tier-grid">
     <article class="tier tier--built"><span class="tier-label">Product</span><h3>CYMATIK</h3>
-      <dl><dt>Status</dt><dd>Coming soon. A working prototype in active development.</dd><dt>Availability</dt><dd>Not yet available. Pricing and release details have not been announced.</dd><dt>Planned commercial formats</dt><dd>Windows standalone application and VST3 workflow for the integrated CYMATIK instrument. Not yet released.</dd></dl>
-      <div class="button-row"><a class="btn secondary" href="../cymatik/">See the prototype and the plan</a><a class="btn secondary" href="mailto:jynx@lotuslabz.net?subject=CYMATIK%20updates">Ask about CYMATIK</a></div></article>
+      <dl><dt>Status</dt><dd>Working prototype in active development.</dd><dt>Availability</dt><dd>Not yet available. Pricing and release details have not been announced.</dd><dt>Planned commercial format</dt><dd>Windows standalone application. Additional formats and integrations are still being explored.</dd></dl>
+      <div class="button-row"><a class="btn secondary" href="mailto:jynx@lotuslabz.net?subject=CYMATIK%20updates">Ask about CYMATIK</a></div></article>
     <article class="tier tier--rnd"><span class="tier-label">Studio</span><h3>Creative services</h3>
       <p>Album artwork, music visuals, venue projection, promotional design, and branding from the Lotus Labz studio. Available now by inquiry.</p>
       <div class="button-row"><a class="btn secondary" href="../lotus-labz.html">Start a collaboration</a></div></article>
@@ -39,5 +48,6 @@
 </section>
 </main>
 <footer>© 2026 Lotus Labz — Electronic Music • AI Art • Cybernetic Media</footer>
+<script src="../assets/cymatik-player.js"></script>
 </body>
 </html>
