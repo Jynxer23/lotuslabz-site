@@ -10,8 +10,9 @@ header{padding:18px 22px;border-bottom:1px solid var(--line);background:rgba(0,0
 nav{display:flex;justify-content:space-between;align-items:center;max-width:1180px;margin:auto;gap:24px}
 nav ul{display:flex;align-items:center;list-style:none;gap:22px;padding:0;margin:0}
 nav a[aria-current="page"]{color:var(--accent);font-weight:800}
-.logo{height:96px;max-width:520px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(255,24,32,.55));transform:scale(3);transform-origin:left center}
+.logo{height:72px;width:72px;object-fit:contain;filter:drop-shadow(0 0 14px rgba(255,24,32,.55));mix-blend-mode:lighten}
 .shell{max-width:1180px;margin:auto;padding:0 20px}
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .eyebrow{display:inline-flex;align-items:center;gap:10px;color:#ff3940;font-size:.82rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase}
 .eyebrow:before{content:"";width:34px;height:1px;background:linear-gradient(90deg,var(--accent),var(--blue))}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 21px;border:1px solid transparent;border-radius:999px;background:var(--accent);color:#050608;font-weight:900;box-shadow:0 0 26px rgba(255,24,32,.25);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease,background .2s ease}
@@ -20,57 +21,155 @@ nav a[aria-current="page"]{color:var(--accent);font-weight:800}
 .btn.secondary:hover{color:var(--text);border-color:rgba(40,169,255,.7);box-shadow:0 0 28px rgba(40,169,255,.16)}
 .btn.coming{background:rgba(255,255,255,.055);border-color:rgba(255,255,255,.16);color:rgba(255,255,255,.68);box-shadow:none;cursor:default}
 .button-row{display:flex;flex-wrap:wrap;gap:12px}
-.store-hero{padding:94px 0 48px}
-.store-hero h1,.product-copy h1{font-size:clamp(3.6rem,10vw,7.6rem);line-height:.82;letter-spacing:-.075em;margin:20px 0 24px}
-.store-hero p,.product-copy>p{color:var(--muted);font-size:1.15rem;max-width:720px}
-.store-heading{display:flex;justify-content:space-between;align-items:end;gap:24px;margin:50px 0 24px}
-.store-heading h2{font-size:clamp(2.2rem,5vw,4.2rem);line-height:.95;letter-spacing:-.055em;margin:0}
-.store-heading p{max-width:510px;margin:0;color:var(--muted)}
-.product-card{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(280px,.75fr);overflow:hidden;border:1px solid rgba(255,255,255,.17);border-radius:30px;background:linear-gradient(140deg,rgba(8,10,17,.96),rgba(5,7,12,.8));box-shadow:0 30px 110px rgba(0,0,0,.62)}
-.product-card-media{position:relative;background:#000;min-height:440px}
-.product-card-media img{display:block;width:100%;height:100%;object-fit:cover}
-.product-card-media:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent 60%,rgba(4,5,8,.86))}
-.product-card-copy{display:flex;flex-direction:column;justify-content:center;padding:38px 34px}
 .status{display:inline-flex;align-items:center;align-self:flex-start;padding:7px 11px;border:1px solid rgba(255,255,255,.18);border-radius:999px;color:#d9dce3;font-size:.75rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase;background:rgba(255,255,255,.055)}
-.product-card h3{font-size:clamp(2.7rem,6vw,5rem);letter-spacing:-.06em;line-height:.88;margin:22px 0 10px}
-.product-card-copy p{color:var(--muted);margin:0 0 24px}
-.future-note{margin:26px 0 86px;padding:24px 26px;border:1px dashed rgba(255,255,255,.22);border-radius:20px;color:var(--muted);background:rgba(7,10,15,.62)}
-.future-note strong{color:var(--text)}
-.product-hero{padding:54px 0 82px}
+
+/* ── Store page ─────────────────────────────────────────── */
+.store-hero{padding:82px 0 36px}
+.store-hero h1{font-size:clamp(3.6rem,10vw,7.6rem);line-height:.82;letter-spacing:-.075em;margin:20px 0 0}
+.store-products{padding-bottom:92px}
+
+/* CYMATIK cinematic showcase card */
+.cymatik-showcase{border:1px solid rgba(255,24,32,.28);border-radius:28px;overflow:hidden;background:#000;box-shadow:0 0 0 1px rgba(255,24,32,.10),0 32px 120px rgba(0,0,0,.72),0 0 60px rgba(255,24,32,.08);margin-top:40px;transition:box-shadow .35s ease,border-color .35s ease}
+.cymatik-showcase:hover{border-color:rgba(255,24,32,.5);box-shadow:0 0 0 1px rgba(255,24,32,.22),0 36px 130px rgba(0,0,0,.76),0 0 80px rgba(255,24,32,.14)}
+.cymatik-showcase-link{display:block;line-height:0}
+.cymatik-showcase-img{display:block;width:100%;height:auto}
+.cymatik-showcase-bar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 28px;border-top:1px solid rgba(255,255,255,.10);background:rgba(4,5,8,.92)}
+
+/* ── CYMATIK product page ───────────────────────────────── */
+.product-hero{padding:38px 0 34px}
 .product-layout{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.35fr);gap:34px;align-items:center}
-.product-copy h1{margin-bottom:20px}
-.product-copy .tagline{color:#fff;font-size:clamp(1.25rem,2.5vw,1.75rem);letter-spacing:.16em;text-transform:uppercase;margin-bottom:22px}
+.product-copy h1{font-size:clamp(2.8rem,6.2vw,4.8rem);line-height:.9;letter-spacing:-.055em;margin:16px 0 14px}
+.product-copy .tagline{color:#fff;font-size:clamp(.9rem,1.5vw,1.1rem);letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px}
+.product-copy>p{color:var(--muted);font-size:1.05rem;max-width:560px;margin:0 0 14px}.product-copy>p.lead{color:#e6eaf0}.product-copy>p.concept{color:var(--text);font-size:clamp(1.15rem,1.9vw,1.4rem);font-weight:700;line-height:1.3;letter-spacing:-.01em;margin:6px 0 22px}button.btn{font:inherit;font-weight:900;cursor:pointer}
 .product-visual{overflow:hidden;border:1px solid rgba(255,255,255,.17);border-radius:28px;background:#000;box-shadow:0 30px 100px rgba(0,0,0,.65),0 0 48px rgba(40,169,255,.1)}
 .product-visual img{display:block;width:100%;height:auto}
-.proof-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--line);margin-top:36px}
-.proof{padding:22px;background:rgba(5,8,13,.94)}
+.proof-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;border:1px solid var(--line);border-radius:20px;overflow:hidden;background:var(--line);margin-top:28px}
+.proof{padding:18px 20px;background:rgba(5,8,13,.94)}
 .proof strong{display:block;font-size:1rem;margin-bottom:5px}
 .proof span{color:var(--muted);font-size:.86rem}
-.section{padding:82px 0}
-.section-head{max-width:780px;margin-bottom:34px}
-.section-head h2{font-size:clamp(2.65rem,6vw,5rem);line-height:.9;letter-spacing:-.065em;margin:14px 0 18px}
-.section-head p{color:var(--muted);font-size:1.08rem}
+.section{padding:54px 0}
+.section-head{max-width:780px;margin-bottom:26px}
+.section-head h2{font-size:clamp(1.75rem,3.3vw,2.6rem);line-height:1.08;letter-spacing:-.035em;margin:12px 0 14px}
+.section-head p{color:var(--muted);font-size:1.02rem}
+
+/* Demo frame — structured to accept 32:9 ultrawide footage later */
 .demo-frame{overflow:hidden;border:1px solid rgba(255,255,255,.18);border-radius:28px;background:#000;box-shadow:0 28px 90px rgba(0,0,0,.62)}
-.demo-frame video{display:block;width:100%;aspect-ratio:16/9;background:#000}
+.demo-video{display:block;width:100%;height:auto;background:#000}
+.demo-frame--wide .demo-video{aspect-ratio:16/9}
 .demo-caption{display:flex;justify-content:space-between;gap:24px;align-items:center;padding:18px 22px;border-top:1px solid var(--line);background:rgba(5,8,13,.95)}
 .demo-caption p{margin:0;color:var(--muted)}
 .demo-caption strong{color:var(--text)}
+
 .feature-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
 .feature{position:relative;overflow:hidden;min-height:270px;padding:30px;border:1px solid var(--line);border-radius:24px;background:linear-gradient(155deg,rgba(255,24,32,.11),rgba(40,169,255,.045) 48%,rgba(4,7,12,.9));box-shadow:0 18px 55px rgba(0,0,0,.35)}
 .feature:before{content:attr(data-number);position:absolute;right:18px;top:5px;color:rgba(255,255,255,.045);font-size:6.5rem;font-weight:900;line-height:1}
 .feature h3{position:relative;font-size:1.55rem;line-height:1.05;margin:86px 0 12px}
 .feature p{position:relative;color:var(--muted);margin:0}
 .control-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
-.control-card{padding:30px;border:1px solid var(--line);border-radius:22px;background:rgba(5,8,13,.8)}
-.control-card h3{margin:0 0 10px;font-size:1.4rem}
+.control-card{padding:24px 26px;border:1px solid var(--line);border-radius:22px;background:rgba(5,8,13,.8)}
+.control-card h3{margin:0 0 8px;font-size:1.2rem}
 .control-card p{margin:0;color:var(--muted)}
-.requirements{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:34px;border:1px solid var(--line);border-radius:26px;background:linear-gradient(135deg,rgba(5,8,13,.96),rgba(9,8,18,.86))}
+.requirements{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding:30px;border:1px solid var(--line);border-radius:26px;background:linear-gradient(135deg,rgba(5,8,13,.96),rgba(9,8,18,.86))}
 .requirements h3{margin:0 0 12px;font-size:1.7rem}.requirements p{margin:0;color:var(--muted)}
 .requirements ul{margin:0;padding-left:20px;color:var(--muted)}.requirements li+li{margin-top:8px}
-.release-cta{position:relative;overflow:hidden;text-align:center;margin:24px 0 92px;padding:70px 24px;border:1px solid rgba(255,255,255,.17);border-radius:30px;background:radial-gradient(circle at 50% 0%,rgba(166,119,255,.22),transparent 37%),radial-gradient(circle at 18% 80%,rgba(255,24,32,.18),transparent 35%),rgba(4,6,11,.94);box-shadow:0 30px 100px rgba(0,0,0,.62)}
-.release-cta h2{font-size:clamp(3rem,8vw,6.8rem);line-height:.84;letter-spacing:-.07em;margin:16px 0 22px}.release-cta p{max-width:680px;margin:0 auto 26px;color:var(--muted);font-size:1.08rem}.release-cta .button-row{justify-content:center}
+.release-cta{position:relative;overflow:hidden;text-align:center;margin:18px auto 72px;padding:52px 24px;max-width:1140px;border:1px solid rgba(255,255,255,.17);border-radius:30px;background:radial-gradient(circle at 50% 0%,rgba(166,119,255,.22),transparent 37%),radial-gradient(circle at 18% 80%,rgba(255,24,32,.18),transparent 35%),rgba(4,6,11,.94);box-shadow:0 30px 100px rgba(0,0,0,.62)}
+.release-cta h2{font-size:clamp(2rem,4.6vw,3.4rem);line-height:1;letter-spacing:-.045em;margin:14px 0 14px}.release-cta p{max-width:620px;margin:0 auto 22px;color:var(--muted);font-size:1.05rem}.release-cta .button-row{justify-content:center}
 .faq{display:grid;gap:12px}.faq details{border:1px solid var(--line);border-radius:18px;background:rgba(5,8,13,.82);padding:0 22px}.faq summary{cursor:pointer;font-weight:800;padding:18px 0}.faq p{color:var(--muted);margin:0;padding:0 0 20px}
 footer{text-align:center;padding:40px 20px;border-top:1px solid var(--line);color:var(--muted);background:rgba(0,0,0,.66)}
-@media(max-width:900px){header{padding:14px 18px}nav{align-items:flex-start;flex-direction:column;gap:12px}nav ul{flex-wrap:wrap;gap:12px 16px}.logo{height:70px;max-width:360px;transform:scale(1.4)}.store-hero{padding-top:56px}.product-card,.product-layout,.requirements{grid-template-columns:1fr}.product-card-media{min-height:0}.product-card-media:after{background:linear-gradient(180deg,transparent 65%,rgba(4,5,8,.88))}.product-copy{order:1}.product-visual{order:0}.proof-strip{grid-template-columns:repeat(2,1fr)}.feature-grid{grid-template-columns:1fr}.control-grid{grid-template-columns:1fr}.demo-caption,.store-heading{align-items:flex-start;flex-direction:column}.section{padding:62px 0}.release-cta{margin-bottom:64px}}
-@media(max-width:560px){.shell{padding:0 14px}.store-hero h1,.product-copy h1{font-size:3.6rem}.product-card{border-radius:22px}.product-card-copy{padding:28px 24px}.proof-strip{grid-template-columns:1fr}.feature{min-height:235px}.feature h3{margin-top:64px}.button-row .btn{width:100%}.demo-caption{padding:16px}.release-cta{border-radius:22px;padding:54px 18px}}
-@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn{transition:none}}
+
+/* ── Phase 1: brand lockup (v2 mark; no scale hack) ─────── */
+.brand{display:flex;align-items:center;gap:14px;flex:none}
+.brand-mark{display:block;height:46px;width:auto}
+.brand-word{color:#ff3a42;font-weight:800;font-size:1.05rem;letter-spacing:.34em;text-transform:uppercase;white-space:nowrap}
+.brand:hover .brand-word{color:#fff}
+
+/* ── Phase 1: in-place demo launcher (card -> video) ────── */
+.cymatik-stage{position:relative;overflow:hidden;background:#000}
+.product-visual .cymatik-stage{display:block}
+.cymatik-promo{position:relative;display:block;opacity:1;visibility:visible;transition:opacity .4s ease,visibility 0s linear 0s}
+.cymatik-card{display:block;width:100%;height:auto}
+.cymatik-trigger{position:absolute;transform:translate(-50%,-50%);margin:0;padding:0;border:0;background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer;min-width:44px;min-height:44px;transition:background-color .25s ease,box-shadow .25s ease}
+.cymatik-trigger:focus-visible{outline:2px solid var(--blue);outline-offset:4px}
+.cymatik-trigger--watchproto{left:84%;top:87.5%;width:22%;height:9%;border-radius:999px}
+.cymatik-trigger--watchproto:hover{background:rgba(255,255,255,.1);box-shadow:0 0 22px rgba(255,24,32,.28)}
+.cymatik-player{position:absolute;inset:0;opacity:0;visibility:hidden;background:#000;transition:opacity .4s ease,visibility 0s linear .4s}
+.cymatik-video{display:block;width:100%;height:100%;object-fit:contain;background:#000}
+.cymatik-stage.is-playing .cymatik-promo{opacity:0;visibility:hidden;transition:opacity .4s ease,visibility 0s linear .4s}
+.cymatik-stage.is-playing .cymatik-player{opacity:1;visibility:visible;transition:opacity .4s ease,visibility 0s linear 0s}
+.cymatik-close{position:absolute;top:14px;right:14px;z-index:3;display:flex;align-items:center;justify-content:center;width:44px;height:44px;font-size:1.5rem;line-height:1;color:var(--text);background:rgba(0,0,0,.62);border:1px solid var(--line);border-radius:50%;cursor:pointer;transition:background-color .2s ease,border-color .2s ease}
+.cymatik-close:hover{background:rgba(0,0,0,.85);border-color:rgba(255,255,255,.4)}
+.cymatik-close:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.product-visual .demo-caption{padding:14px 20px}
+.product-visual .demo-caption p{font-size:.94rem;line-height:1.45}
+
+/* ── Phase 1: concept, tiers, audiences ─────────────────── */
+.concept-grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:40px;align-items:center}
+.concept-grid .section-head{margin-bottom:0}
+.pull{color:var(--text)!important;font-weight:700;border-left:2px solid var(--accent);padding-left:16px;margin-top:22px}
+.model{padding:26px;border:1px solid var(--line);border-radius:22px;background:rgba(5,8,13,.8)}
+.model-row{display:grid;gap:6px;padding:14px 0}
+.model-row+.model-row{border-top:1px solid var(--line)}
+.model-label{font-size:.72rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.model-row--cymatik .model-label{color:#ff3940}
+.model-flow{font-size:1.05rem;line-height:1.5;color:var(--muted)}
+.model-row--cymatik .model-flow{color:var(--text);font-weight:700}
+.model-flow i{font-style:normal;color:var(--blue);padding:0 .25em}
+.model-note{margin:12px 0 0;color:var(--muted);font-size:.92rem}
+.play-band{padding-top:6px;padding-bottom:6px;text-align:center}
+.play-band p{max-width:760px;margin:12px auto 0;font-size:clamp(1.15rem,2vw,1.5rem);line-height:1.4;font-weight:700;letter-spacing:-.015em}
+.tier-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.tier{padding:24px 24px 18px;border:1px solid var(--line);border-radius:22px;background:rgba(5,8,13,.82)}
+.tier--built{border-color:rgba(255,24,32,.4);background:linear-gradient(160deg,rgba(255,24,32,.09),rgba(5,8,13,.86) 55%)}
+.tier--rnd{border-color:rgba(40,169,255,.32)}
+.tier--next{border-style:dashed;border-color:rgba(255,255,255,.22)}
+.tier-label{display:inline-block;font-size:.72rem;font-weight:900;letter-spacing:.18em;text-transform:uppercase;color:#ff3940}
+.tier--rnd .tier-label{color:var(--blue)}.tier--next .tier-label{color:var(--muted)}
+.tier h3{margin:8px 0 12px;font-size:1.2rem}
+.tier ul{margin:0;padding-left:18px;color:var(--muted);font-size:.95rem}
+.tier li+li{margin-top:10px}
+.tier li strong{color:var(--text)}
+.src{display:inline-block;margin-left:2px;padding:1px 8px;border:1px solid rgba(255,255,255,.2);border-radius:999px;font-style:normal;font-size:.68rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#d9dce3;white-space:nowrap}
+.tier--dev{border-color:rgba(166,119,255,.36)}.tier--dev .tier-label{color:#b58cff}
+.tier-intro{margin:-4px 0 12px;color:var(--muted);font-size:.84rem}
+.tier--wide{margin-top:16px;padding:20px 24px}.tier--wide p{margin:8px 0 0;color:var(--muted);font-size:.95rem}.tier--wide strong{color:var(--text)}
+.tier-note{margin:16px 0 0;color:var(--muted);font-size:.9rem}.tier-note strong{color:var(--text)}
+.audience-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+
+@media(max-width:900px){
+  header{padding:14px 18px}
+  nav{align-items:flex-start;flex-direction:column;gap:12px}
+  nav ul{flex-wrap:wrap;gap:12px 16px}
+  .logo{height:56px;width:56px}
+  .brand-mark{height:40px}
+  .brand-word{font-size:.92rem;letter-spacing:.28em}
+  .concept-grid{grid-template-columns:1fr;gap:26px}
+  .tier-grid{grid-template-columns:1fr}
+  .audience-grid{grid-template-columns:repeat(2,1fr)}
+  .store-hero{padding-top:56px}
+  .product-layout,.requirements{grid-template-columns:1fr}
+  .product-copy{order:1}
+  .product-visual{order:0}
+  .proof-strip{grid-template-columns:repeat(2,1fr)}
+  .feature-grid{grid-template-columns:1fr}
+  .control-grid{grid-template-columns:1fr}
+  .demo-caption{align-items:flex-start;flex-direction:column}
+  .section{padding:44px 0}
+  .product-hero{padding-top:26px}
+  .release-cta{margin-bottom:52px}
+  .cymatik-showcase-bar{flex-direction:column;align-items:flex-start}
+}
+@media(max-width:560px){
+  .shell{padding:0 14px}
+  .store-hero h1,.product-copy h1{font-size:3.6rem}
+  .proof-strip{grid-template-columns:1fr}
+  .audience-grid{grid-template-columns:1fr}
+  .brand-word{letter-spacing:.22em}
+  .feature{min-height:235px}
+  .feature h3{margin-top:64px}
+  .button-row .btn{width:100%}
+  .demo-caption{padding:16px}
+  .release-cta{border-radius:22px;padding:54px 18px}
+  .cymatik-showcase{border-radius:20px}
+  .cymatik-showcase-bar{padding:16px 18px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.cymatik-showcase,.cymatik-promo,.cymatik-player,.cymatik-trigger,.cymatik-close{transition:none}}
