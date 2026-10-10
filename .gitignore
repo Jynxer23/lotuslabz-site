@@ -1,0 +1,44 @@
+# Local environment files and secrets (never commit)
+.env
+.env.*
+!.env.example
+*.secret
+secrets.*
+.dev.vars
+
+# Credentials and private keys
+*.pem
+*.key
+*.pfx
+*.p12
+*.snk
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+
+# Temporary and backup files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+*.log
+
+# Editor and OS artifacts
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# Local tool state
+.claude/
+.codex/
+.wrangler/
+
+# Local build outputs and dependencies (the site itself is plain static files)
+node_modules/
+.cache/
