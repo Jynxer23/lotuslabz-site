@@ -57,3 +57,4 @@
 .store-facts .tier p{margin:8px 0 0;color:#b8c1cc;font-size:.95rem}
 .store-facts .button-row{margin-top:16px}
 @media(max-width:900px){.store-facts .tier-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.store-facts dl{grid-template-columns:1fr;gap:2px 0}.store-facts dd{margin-bottom:12px}}
